@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Kulala · Magical Bedtime Stories</title>
+  <!-- Tailwind + Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- React & ReactDOM & Babel -->
+  <script src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* Custom animations & star field */
+    @keyframes twinkle {
+      0% { opacity: 0.2; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.2); }
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: twinkle 3s infinite alternate;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    body {
+      font-family: 'Nunito', 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #050824 0%, #0b1030 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: rgba(10, 20, 40, 0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .glass-bottom {
+      background: rgba(10, 20, 40, 0.85);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .story-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .story-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(0,0,0,0.4);
+    }
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.2s;
+      padding: 0.5rem;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .story-modal {
+      background: #12122c;
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 400px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .voice-player {
+      background: #1c1c3a;
+      border-radius: 1rem;
+      padding: 0.8rem;
+      margin: 0.8rem;
+    }
+    .story-text {
+      padding: 0.8rem;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f1f2f;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      opacity: 0;
+      transition: 0.2s;
+      z-index: 400;
+      white-space: nowrap;
+    }
+    /* Sleep mode dimmer */
+    .sleep-dimmer {
+      position: fixed;
+      inset: 0;
+      background: black;
+      z-index: 250;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+    }
+    .sleep-dimmer.active {
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+  // ----------------------------- DATA -----------------------------
+  const ALL_STORIES = [
+    {
+      id: 1,
+      title: "The Moonlit Owl",
+      age: "3–6",
+      readTime: "5 min",
+      author: "Clara Night",
+      category: "Sleep",
+      cover: "https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?w=400&h=500&fit=crop",
+      body: "Under the silver moon, a wise old owl watched over the sleepy forest. Every night, he would spread his wings and whisper gentle lullabies to {name}. The rabbits, the deer, and even the tiny mice would close their eyes and drift into dreamland. {name} felt safe and warm, listening to the owl's soft song. Goodnight, {name}. Let the moonlit owl guide your dreams. 🦉🌙",
+      isNew: true
+    },
+    {
+      id: 2,
+      title: "Whispers of the Forest",
+      age: "4–7",
+      readTime: "8 min",
+      author: "Elena Starling",
+      category: "Calm",
+      cover: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=500&fit=crop",
+      body: "Deep in the ancient woods, the trees spoke in hushed whispers. One evening, {name} followed the whispers and discovered a hidden glade where fireflies danced in spirals. The forest taught {name} that peace comes when you listen. From that night on, {name} would visit the woods whenever calm was needed. 🌲✨",
+      isNew: true
+    },
+    {
+      id: 3,
+      title: "Benny the Brave Bear",
+      age: "2–5",
+      readTime: "6 min",
+      author: "Luna Bearheart",
+      category: "Adventure",
+      cover: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=500&fit=crop",
+      body: "Benny was a little bear with a big heart. When a storm scattered the honey pots, {name} and Benny worked together to find them. They crossed rickety bridges, climbed tall trees, and shared berries with a grumpy badger. By the end, {name} learned that being brave isn't about being big—it's about being kind. 🐻🍯",
+      isNew: false
+    },
+    {
+      id: 4,
+      title: "The Cloud Jumper",
+      age: "5–8",
+      readTime: "7 min",
+      author: "Skye Dreamer",
+      category: "Magic",
+      cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=500&fit=crop",
+      body: "{name} had a secret: every night, a fluffy cloud would float beside the window. Together they'd leap from cloud to cloud, above the sleeping city. One night they found a lost star. {name} gently held it and returned it to the sky. The star shone brighter than ever. Sweet dreams, {name}, cloud jumper. ☁️⭐",
+      isNew: true
+    },
+    {
+      id: 5,
+      title: "Sleepy Star Parade",
+      age: "3–6",
+      readTime: "4 min",
+      author: "Stella Cosmos",
+      category: "Sleep",
+      cover: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=500&fit=crop",
+      body: "Every night, the stars line up in the sky and march across the heavens. They twinkle and dance, counting sleepy children. When {name} yawns, a star winks. When {name} closes their eyes, a star sprinkles stardust on their dreams. Tonight, join the sleepy star parade and float among the constellations. 🌟✨",
+      isNew: false
+    },
+    {
+      id: 6,
+      title: "The Tree That Hugged the Wind",
+      age: "4–6",
+      readTime: "6 min",
+      author: "Willow Green",
+      category: "Calm",
+      cover: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=500&fit=crop",
+      body: "In a quiet meadow, an old oak tree would open its branches wide and hug the rushing wind, slowing it to a whisper. {name} loved to sit beneath its branches and feel the gentle breeze. The tree taught {name} to be calm and patient. Whenever the wind blows gently, remember the tree that hugged the wind. 🌳💨",
+      isNew: false
+    },
+    {
+      id: 7,
+      title: "Benny the Bear's Big Yawn",
+      age: "2–4",
+      readTime: "4 min",
+      author: "Luna Bearheart",
+      category: "Sleep",
+      cover: "https://images.unsplash.com/photo-1571553125163-53b8bd72c71e?w=400&h=500&fit=crop",
+      body: "Benny the Bear was so sleepy after a day of berry picking. He stretched and let out the biggest yawn—it echoed through the forest. One by one, the rabbits, deer, and owls began yawning too. {name} yawned along with them, and soon the whole forest grew quiet. Goodnight, {name}. 🐻💤",
+      isNew: false
+    },
+    {
+      id: 8,
+      title: "Ellie the Elephant's Slow Steps",
+      age: "4–6",
+      readTime: "5 min",
+      author: "Savannah Dreamer",
+      category: "Calm",
+      cover: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=400&h=500&fit=crop",
+      body: "Ellie was never in a hurry. While others rushed, she took slow, deliberate steps, feeling the earth beneath her feet. {name} walked with Ellie and discovered the songs of birds and the scent of flowers. Together they taught the savannah to slow down. 🐘🌿",
+      isNew: false
+    },
+    {
+      id: 9,
+      title: "The Floating Cloud",
+      age: "2–4",
+      readTime: "4 min",
+      author: "Nimbus Sky",
+      category: "Magic",
+      cover: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=500&fit=crop",
+      body: "High above, a little cloud drifted lazily. It watched {name} playing below and wished to bring sweet dreams. Every night, it would float over {name}'s window and sprinkle sleepy dust. {name} closed their eyes and visited magical lands. The cloud became {name}'s dream weaver. ☁️✨",
+      isNew: false
+    },
+    {
+      id: 10,
+      title: "The Fox Who Listened to Silence",
+      age: "6–8",
+      readTime: "8 min",
+      author: "Whisper Paws",
+      category: "Adventure",
+      cover: "https://images.unsplash.com/photo-1517662613602-4b8e02886677?w=400&h=500&fit=crop",
+      body: "A curious fox lived near a quiet pond. One day, {name} sat still with the fox and listened. They heard the silence — a gentle hum that held secrets of the forest. The silence taught {name} to hear the heartbeat of trees and the whispers of hidden streams. 🦊🌲",
+      isNew: false
+    }
+  ];
+
+  const CONTINUE_READING = [
+    { id: 1, title: "The Moonlit Owl", readTime: "5 min", author: "Clara Night", cover: ALL_STORIES[0].cover, progress: 45 },
+    { id: 3, title: "Benny the Brave Bear", readTime: "6 min", author: "Luna Bearheart", cover: ALL_STORIES[2].cover, progress: 72 },
+    { id: 7, title: "Benny the Bear's Big Yawn", readTime: "4 min", author: "Luna Bearheart", cover: ALL_STORIES[6].cover, progress: 28 }
+  ];
+
+  const CATEGORIES = ["Sleep", "Calm", "Adventure", "Animals", "Magic", "New"];
+
+  // Background sounds (using Web Audio API with simple loops)
+  const SOUNDS = {
+    rain: "https://www.soundjay.com/nature/rain-sound-effect-2.mp3",
+    forest: "https://www.soundjay.com/nature/forest-birds-sound-effect.mp3",
+    ocean: "https://www.soundjay.com/nature/ocean-waves-sound-effect.mp3"
+  };
+
+  // Badges definitions
+  const BADGES = [
+    { id: "first_story", name: "First Story", description: "Read your first story", icon: "📖", condition: (progress) => progress.totalStoriesRead >= 1 },
+    { id: "night_owl", name: "Night Owl", description: "Read 3 stories after 8 PM", icon: "🦉", condition: (progress) => progress.nightReads >= 3 },
+    { id: "streak_3", name: "3-Day Streak", description: "Read stories 3 days in a row", icon: "🔥", condition: (progress) => progress.streak >= 3 },
+    { id: "streak_7", name: "Week Warrior", description: "7-day reading streak", icon: "⭐", condition: (progress) => progress.streak >= 7 },
+    { id: "calm_master", name: "Calm Master", description: "Read 5 Calm stories", icon: "🧘", condition: (progress) => (progress.categoryReads?.Calm || 0) >= 5 },
+    { id: "adventurer", name: "Adventurer", description: "Read 5 Adventure stories", icon: "🗺️", condition: (progress) => (progress.categoryReads?.Adventure || 0) >= 5 }
+  ];
+
+  // ----------------------------- VOICE HOOK -----------------------------
+  const useVoiceSynthesis = () => {
+    const [voices, setVoices] = React.useState([]);
+    const [isPlaying, setIsPlaying] = React.useState(false);
+    const [isPaused, setIsPaused] = React.useState(false);
+    const [currentSentenceIndex, setCurrentSentenceIndex] = React.useState(0);
+    const utteranceRef = React.useRef(null);
+    const synth = window.speechSynthesis;
+
+    React.useEffect(() => {
+      const loadVoices = () => {
+        const available = synth.getVoices();
+        const preferred = available.filter(v =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Google') || v.name.includes('Natural') ||
+           v.name.includes('Samantha') || v.name.includes('Karen') ||
+           v.name.includes('Daniel') || v.name.includes('Victoria') ||
+           v.name.includes('Alex') || v.name.includes('Moira'))
+        );
+        setVoices(preferred.length ? preferred : available.filter(v => v.lang.startsWith('en')));
+      };
+      loadVoices();
+      if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = loadVoices;
+      }
+    }, []);
+
+    const speakSentences = (sentences, options = { rate: 0.85, pitch: 1.0 }) => {
+      if (!sentences.length) return;
+      if (synth.speaking) synth.cancel();
+
+      let index = 0;
+      const speakNext = () => {
+        if (index >= sentences.length) {
+          setIsPlaying(false);
+          setCurrentSentenceIndex(index);
+          return;
+        }
+        setCurrentSentenceIndex(index);
+        const utterance = new SpeechSynthesisUtterance(sentences[index]);
+        utterance.rate = options.rate;
+        utterance.pitch = options.pitch;
+        utterance.voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+        utterance.onend = () => {
+          index++;
+          if (index < sentences.length && !isPaused) speakNext();
+          else if (index >= sentences.length) setIsPlaying(false);
+        };
+        utterance.onerror = () => setIsPlaying(false);
+        utteranceRef.current = utterance;
+        synth.speak(utterance);
+      };
+      setIsPlaying(true);
+      setIsPaused(false);
+      speakNext();
+    };
+
+    const pause = () => {
+      if (synth.speaking) {
+        synth.pause();
+        setIsPaused(true);
+      }
+    };
+
+    const resume = () => {
+      if (synth.paused) {
+        synth.resume();
+        setIsPaused(false);
+      }
+    };
+
+    const stop = () => {
+      synth.cancel();
+      setIsPlaying(false);
+      setIsPaused(false);
+      setCurrentSentenceIndex(0);
+    };
+
+    return {
+      voices,
+      isPlaying,
+      isPaused,
+      currentSentenceIndex,
+      speakSentences,
+      pause,
+      resume,
+      stop,
+    };
+  };
+
+  // ----------------------------- COMPONENTS -----------------------------
+  const StarField = () => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {[...Array(80)].map((_, i) => (
+        <div
+          key={i}
+          className="star absolute bg-white rounded-full"
+          style={{
+            width: Math.random() * 3 + 1 + 'px',
+            height: Math.random() * 3 + 1 + 'px',
+            left: Math.random() * 100 + '%',
+            top: Math.random() * 100 + '%',
+            animationDelay: Math.random() * 5 + 's',
+          }}
+        />
+      ))}
+      <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-yellow-100/10 blur-[80px]" />
+      <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-indigo-200/10 blur-[80px]" />
+    </div>
+  );
+
+  const Header = ({ onOpenProfile }) => (
+    <div className="sticky top-0 z-20 glass px-5 py-3 flex justify-between items-center rounded-b-2xl">
+      <div className="flex items-center gap-2">
+        <div className="text-2xl text-yellow-300 drop-shadow-lg">🌙</div>
+        <h1 className="text-xl font-bold tracking-wide text-white" style={{ fontFamily: 'Quicksand, sans-serif' }}>Kulala</h1>
+      </div>
+      <button onClick={onOpenProfile} className="w-9 h-9 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/20 transition">
+        👤
+      </button>
+    </div>
+  );
+
+  const BottomNav = ({ activeTab, onTabChange }) => {
+    const tabs = [
+      { name: "home", icon: "🏠", label: "Home" },
+      { name: "library", icon: "📚", label: "Library" },
+      { name: "favorites", icon: "❤️", label: "Favorites" },
+      { name: "profile", icon: "👤", label: "Profile" }
+    ];
+    return (
+      <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto glass-bottom rounded-t-2xl z-20">
+        <div className="flex justify-around items-center py-2">
+          {tabs.map(tab => (
+            <button
+              key={tab.name}
+              onClick={() => onTabChange(tab.name)}
+              className={`flex flex-col items-center py-1 px-3 rounded-full transition ${
+                activeTab === tab.name ? 'text-yellow-400' : 'text-white/60'
+              }`}
+            >
+              <span className="text-xl">{tab.icon}</span>
+              <span className="text-[10px] mt-0.5">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const Hero = ({ onNewClick }) => (
+    <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-indigo-900/80 via-purple-900/60 to-blue-900/80 border border-white/20 shadow-2xl backdrop-blur-sm mx-4">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=600&fit=crop')] bg-cover bg-center opacity-20 mix-blend-overlay" />
+      <div className="relative p-6 z-10">
+        <div className="flex justify-between items-start">
+          <button
+            onClick={onNewClick}
+            className="inline-block px-3 py-1 rounded-full bg-yellow-400/20 text-yellow-300 text-xs font-semibold backdrop-blur-sm border border-yellow-400/30 hover:bg-yellow-400/30 transition cursor-pointer"
+          >
+            ✨ New
+          </button>
+          <div className="text-3xl opacity-70">🌙</div>
+        </div>
+        <h2 className="text-2xl font-bold text-white leading-tight mt-2" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+          Sleep Better with<br />Magical Stories
+        </h2>
+        <p className="text-indigo-100 text-sm mt-2 opacity-90">Personalized bedtime tales for peaceful sleep</p>
+        <button className="mt-5 px-6 py-2.5 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-indigo-950 font-bold text-sm shadow-lg hover:shadow-yellow-500/20 transition transform hover:scale-105 flex items-center gap-2">
+          Start Reading <span>✨</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  const CategoryPills = ({ activeFilter, onFilterChange }) => (
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 px-4">
+      {CATEGORIES.map(cat => (
+        <button
+          key={cat}
+          onClick={() => onFilterChange(cat)}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
+            activeFilter === cat
+              ? 'bg-yellow-400 text-indigo-950 shadow-md shadow-yellow-500/30'
+              : 'bg-white/10 text-white/80 backdrop-blur-sm border border-white/20 hover:bg-white/20'
+          }`}
+        >
+          {cat}
+        </button>
+      ))}
+    </div>
+  );
+
+  const StoryCard = ({ story, onOpen, onToggleFavorite, isFavorite, showHeart = true }) => (
+    <div className="flex-none w-40 story-card cursor-pointer transform transition duration-300" onClick={() => onOpen(story)}>
+      <div className="relative rounded-2xl overflow-hidden shadow-xl bg-indigo-950/60 border border-white/10">
+        <img src={story.cover} alt={story.title} className="w-full h-48 object-cover" />
+        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full text-[11px] text-yellow-300 font-bold">
+          {story.age}
+        </div>
+        {showHeart && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite(story.id); }}
+            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-lg"
+          >
+            {isFavorite ? "❤️" : "🤍"}
+          </button>
+        )}
+      </div>
+      <div className="mt-2">
+        <h4 className="text-white text-sm font-semibold truncate">{story.title}</h4>
+        <div className="flex items-center gap-2 text-[11px] text-indigo-200 mt-1">
+          <span className="flex items-center gap-1">🌙 {story.readTime}</span>
+          <span className="text-white/40">•</span>
+          <span>{story.author}</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const StoryGrid = ({ stories, onOpen, onToggleFavorite, favorites }) => (
+    <div className="grid grid-cols-2 gap-4 px-4 pb-4">
+      {stories.map(story => (
+        <div key={story.id} className="story-card cursor-pointer transform transition" onClick={() => onOpen(story)}>
+          <div className="relative rounded-xl overflow-hidden shadow-lg bg-indigo-950/60 border border-white/10">
+            <img src={story.cover} alt={story.title} className="w-full h-40 object-cover" />
+            <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] text-yellow-300 font-bold">
+              {story.age}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleFavorite(story.id); }}
+              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-lg"
+            >
+              {favorites.includes(story.id) ? "❤️" : "🤍"}
+            </button>
+          </div>
+          <div className="mt-2">
+            <h4 className="text-white text-sm font-semibold truncate">{story.title}</h4>
+            <div className="flex items-center gap-2 text-[10px] text-indigo-200 mt-1">
+              <span>🌙 {story.readTime}</span>
+              <span>•</span>
+              <span>{story.author}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const ContinueCard = ({ item, story, onOpen }) => (
+    <div
+      className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-3 flex gap-3 items-center hover:bg-white/10 transition cursor-pointer"
+      onClick={() => story && onOpen(story)}
+    >
+      <img src={item.cover} alt={item.title} className="w-16 h-20 rounded-xl object-cover" />
+      <div className="flex-1">
+        <h4 className="text-white font-semibold text-sm">{item.title}</h4>
+        <div className="flex items-center gap-2 text-[11px] text-indigo-200 mt-1">
+          <span>🌙 {item.readTime}</span>
+          <span>•</span>
+          <span>{item.author}</span>
+        </div>
+        <div className="mt-2">
+          <div className="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${item.progress}%` }} />
+          </div>
+          <span className="text-[10px] text-yellow-300 mt-1 inline-block">{item.progress}% read</span>
+        </div>
+      </div>
+      <div className="text-yellow-400 text-sm">▶</div>
+    </div>
+  );
+
+  const VoicePlayer = ({ sentences, isPlaying, isPaused, currentIndex, onPlay, onPause, onResume, onSetTimer }) => {
+    const progress = sentences.length ? (currentIndex / sentences.length) * 100 : 0;
+    return (
+      <div className="voice-player bg-[#1c1c3a] rounded-xl p-3 m-3">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={isPlaying ? (isPaused ? onResume : onPause) : onPlay}
+            className="w-10 h-10 rounded-full bg-yellow-400 text-indigo-950 flex items-center justify-center text-xl"
+          >
+            {isPlaying ? (isPaused ? "▶" : "⏸") : "▶"}
+          </button>
+          <div className="flex-1">
+            <div className="text-yellow-300 text-xs font-semibold">🎙 AI Narrator</div>
+            <div className="text-white/70 text-xs">Smooth bedtime voice</div>
+          </div>
+          <select
+            onChange={(e) => onSetTimer(parseInt(e.target.value))}
+            className="bg-black/30 border border-white/20 rounded-full text-xs px-2 py-1 text-white"
+          >
+            <option value="0">Sleep timer</option>
+            <option value="5">5 min</option>
+            <option value="10">10 min</option>
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+          </select>
+        </div>
+        <div className="mt-2 h-1 bg-white/20 rounded-full overflow-hidden">
+          <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="text-right text-[10px] text-white/40 mt-1">
+          {currentIndex}/{sentences.length} sentences
+        </div>
+      </div>
+    );
+  };
+
+  const BackgroundSoundSelector = ({ activeSound, onSelectSound, volume, onVolumeChange }) => (
+    <div className="bg-white/5 rounded-xl p-3 m-3">
+      <div className="text-yellow-300 text-xs font-semibold mb-2">🎵 Background Sounds</div>
+      <div className="flex gap-2 flex-wrap">
+        {Object.keys(SOUNDS).map(sound => (
+          <button
+            key={sound}
+            onClick={() => onSelectSound(sound)}
+            className={`px-3 py-1 rounded-full text-xs capitalize transition ${
+              activeSound === sound ? 'bg-yellow-400 text-indigo-950' : 'bg-white/10 text-white/80'
+            }`}
+          >
+            {sound}
+          </button>
+        ))}
+        {activeSound && (
+          <button
+            onClick={() => onSelectSound(null)}
+            className="px-3 py-1 rounded-full text-xs bg-red-500/20 text-red-300"
+          >
+            Stop
+          </button>
+        )}
+      </div>
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-white/60 text-xs">Volume</span>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.05"
+          value={volume}
+          onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+          className="flex-1 h-1 bg-white/20 rounded-full"
+        />
+      </div>
+    </div>
+  );
+
+  const StoryModal = ({ story, isOpen, onClose, onPlayVoice, voiceState, onSetTimer, onStoryComplete, userName }) => {
+    const [sentences, setSentences] = React.useState([]);
+    React.useEffect(() => {
+      if (story) {
+        // Replace {name} with user's name
+        const personalizedBody = story.body.replace(/\{name\}/g, userName || "little one");
+        const split = personalizedBody.match(/[^.!?]+[.!?]+/g) || [personalizedBody];
+        setSentences(split);
+      }
+    }, [story, userName]);
+
+    if (!isOpen || !story) return null;
+
+    return (
+      <div className="modal-overlay open" onClick={onClose}>
+        <div className="story-modal" onClick={e => e.stopPropagation()}>
+          <div className="modal-header relative h-44 bg-cover bg-center rounded-t-2xl" style={{ backgroundImage: `url(${story.cover})` }}>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#12122c] to-transparent rounded-t-2xl" />
+            <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white" onClick={onClose}>✕</button>
+            <h2 className="absolute bottom-4 left-4 text-white text-xl font-bold">{story.title}</h2>
+          </div>
+
+          <VoicePlayer
+            sentences={sentences}
+            isPlaying={voiceState.isPlaying}
+            isPaused={voiceState.isPaused}
+            currentIndex={voiceState.currentSentenceIndex}
+            onPlay={() => onPlayVoice(sentences)}
+            onPause={voiceState.pause}
+            onResume={voiceState.resume}
+            onSetTimer={onSetTimer}
+          />
+
+          <div className="story-text p-4 text-white/90 leading-relaxed text-sm">
+            {sentences.map((sentence, i) => (
+              <p key={i} className="mb-2">{sentence}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const ProfileTab = ({ user, favorites, progress, badges, onUpdateName, onUpdateFavoriteThemes, onLogout }) => {
+    const [tempName, setTempName] = React.useState(user?.name || "");
+    const [selectedThemes, setSelectedThemes] = React.useState(user?.favoriteThemes || []);
+    const themes = ["Sleep", "Calm", "Adventure", "Animals", "Magic"];
+
+    const saveProfile = () => {
+      onUpdateName(tempName);
+      onUpdateFavoriteThemes(selectedThemes);
+    };
+
+    return (
+      <div className="px-4 pt-4 pb-8">
+        <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-yellow-400/20 flex items-center justify-center text-3xl">👤</div>
+            <div>
+              <h2 className="text-white text-xl font-bold">{user?.name || "Dreamer"}</h2>
+              <p className="text-indigo-200 text-sm">Bedtime story lover</p>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-4 space-y-3">
+            <div>
+              <label className="text-white/80 text-sm">Your Name</label>
+              <input
+                type="text"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                className="w-full mt-1 bg-white/10 rounded-full px-3 py-1 text-white text-sm"
+                placeholder="Enter your name"
+              />
+            </div>
+            <div>
+              <label className="text-white/80 text-sm">Favorite Themes (for recommendations)</label>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {themes.map(theme => (
+                  <button
+                    key={theme}
+                    onClick={() => setSelectedThemes(prev =>
+                      prev.includes(theme) ? prev.filter(t => t !== theme) : [...prev, theme]
+                    )}
+                    className={`px-3 py-1 rounded-full text-xs transition ${
+                      selectedThemes.includes(theme) ? 'bg-yellow-400 text-indigo-950' : 'bg-white/10 text-white/80'
+                    }`}
+                  >
+                    {theme}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button onClick={saveProfile} className="w-full py-2 bg-yellow-400/20 rounded-full text-yellow-300 text-sm">Save Profile</button>
+          </div>
+
+          <div className="border-t border-white/10 pt-4">
+            <h3 className="text-white font-semibold text-sm mb-2">🏆 Achievements & Streaks</h3>
+            <div className="flex justify-between mb-2">
+              <span className="text-white/70 text-xs">Current Streak</span>
+              <span className="text-yellow-400 font-bold">{progress.streak} days 🔥</span>
+            </div>
+            <div className="flex justify-between mb-2">
+              <span className="text-white/70 text-xs">Total Stories Read</span>
+              <span className="text-yellow-400 font-bold">{progress.totalStoriesRead}</span>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {badges.map(badge => (
+                <div key={badge.id} className="bg-white/10 rounded-full px-2 py-1 text-xs flex items-center gap-1">
+                  <span>{badge.icon}</span> <span className="text-white/80">{badge.name}</span>
+                </div>
+              ))}
+              {badges.length === 0 && <span className="text-white/40 text-xs">Complete stories to earn badges ✨</span>}
+            </div>
+          </div>
+
+          <button onClick={onLogout} className="w-full py-2 bg-red-500/20 rounded-full text-red-300 text-sm mt-2">Sign Out</button>
+        </div>
+        <div className="mt-4 text-center text-xs text-white/40">⭐ Starry Night Edition</div>
+      </div>
+    );
+  };
+
+  // ----------------------------- APP -----------------------------
+  const App = () => {
+    const [activeTab, setActiveTab] = React.useState('home');
+    const [activeFilter, setActiveFilter] = React.useState('Sleep');
+    const [favorites, setFavorites] = React.useState(() => {
+      const saved = localStorage.getItem('kulala_favorites');
+      return saved ? JSON.parse(saved) : [];
+    });
+    const [user, setUser] = React.useState(() => {
+      const saved = localStorage.getItem('kulala_user');
+      return saved ? JSON.parse(saved) : { name: 'Dreamer', favoriteThemes: [] };
+    });
+    const [progress, setProgress] = React.useState(() => {
+      const saved = localStorage.getItem('kulala_progress');
+      return saved ? JSON.parse(saved) : { streak: 0, lastReadDate: null, totalStoriesRead: 0, categoryReads: {}, nightReads: 0 };
+    });
+    const [badges, setBadges] = React.useState(() => {
+      const saved = localStorage.getItem('kulala_badges');
+      return saved ? JSON.parse(saved) : [];
+    });
+    const [selectedStory, setSelectedStory] = React.useState(null);
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const [sleepModeActive, setSleepModeActive] = React.useState(false);
+    const [sleepTimerId, setSleepTimerId] = React.useState(null);
+    const [activeSound, setActiveSound] = React.useState(null);
+    const [soundVolume, setSoundVolume] = React.useState(0.3);
+    const audioRef = React.useRef(null);
+
+    const voice = useVoiceSynthesis();
+
+    // Load/save to localStorage
+    React.useEffect(() => {
+      localStorage.setItem('kulala_favorites', JSON.stringify(favorites));
+    }, [favorites]);
+    React.useEffect(() => {
+      localStorage.setItem('kulala_user', JSON.stringify(user));
+    }, [user]);
+    React.useEffect(() => {
+      localStorage.setItem('kulala_progress', JSON.stringify(progress));
+    }, [progress]);
+    React.useEffect(() => {
+      localStorage.setItem('kulala_badges', JSON.stringify(badges));
+    }, [badges]);
+
+    // Background sound handling
+    React.useEffect(() => {
+      if (activeSound && SOUNDS[activeSound]) {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+        const audio = new Audio(SOUNDS[activeSound]);
+        audio.loop = true;
+        audio.volume = soundVolume;
+        audio.play();
+        audioRef.current = audio;
+      } else {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
+      }
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+      };
+    }, [activeSound, soundVolume]);
+
+    // Update progress when a story is completed (listening finished)
+    const updateProgress = (story) => {
+      const today = new Date().toDateString();
+      let newStreak = progress.streak;
+      if (progress.lastReadDate === today) {
+        // already counted today
+      } else if (progress.lastReadDate === new Date(Date.now() - 86400000).toDateString()) {
+        newStreak += 1;
+      } else {
+        newStreak = 1;
+      }
+      const hour = new Date().getHours();
+      const isNight = hour >= 20 || hour < 5;
+      const newProgress = {
+        ...progress,
+        streak: newStreak,
+        lastReadDate: today,
+        totalStoriesRead: progress.totalStoriesRead + 1,
+        categoryReads: {
+          ...progress.categoryReads,
+          [story.category]: (progress.categoryReads[story.category] || 0) + 1
+        },
+        nightReads: progress.nightReads + (isNight ? 1 : 0)
+      };
+      setProgress(newProgress);
+
+      // Check and award badges
+      const newBadges = [...badges];
+      BADGES.forEach(badge => {
+        if (!newBadges.find(b => b.id === badge.id) && badge.condition(newProgress)) {
+          newBadges.push({ id: badge.id, name: badge.name, icon: badge.icon, earnedAt: new Date().toISOString() });
+        }
+      });
+      if (newBadges.length !== badges.length) {
+        setBadges(newBadges);
+        setTimeout(() => alert(`🎉 New badge earned: ${newBadges[newBadges.length-1].name} ${newBadges[newBadges.length-1].icon}`), 500);
+      }
+    };
+
+    const toggleFavorite = (id) => {
+      setFavorites(prev =>
+        prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+      );
+    };
+
+    const openStory = (story) => {
+      setSelectedStory(story);
+      setModalOpen(true);
+    };
+
+    const closeModal = () => {
+      voice.stop();
+      setModalOpen(false);
+      setSelectedStory(null);
+      if (sleepTimerId) clearTimeout(sleepTimerId);
+      setSleepModeActive(false);
+    };
+
+    const startVoiceForStory = (sentences) => {
+      voice.speakSentences(sentences, { rate: 0.85, pitch: 1.0 });
+      // Mark story as completed when voice ends (simplified: after all sentences)
+      const checkCompletion = setInterval(() => {
+        if (!voice.isPlaying && voice.currentSentenceIndex >= sentences.length && selectedStory) {
+          clearInterval(checkCompletion);
+          updateProgress(selectedStory);
+          if (sleepModeActive) {
+            setTimeout(() => closeModal(), 2000);
+          }
+        }
+      }, 1000);
+    };
+
+    const startSleepTimer = (minutes) => {
+      if (sleepTimerId) clearTimeout(sleepTimerId);
+      if (minutes > 0) {
+        const timer = setTimeout(() => {
+          voice.stop();
+          setSleepModeActive(true);
+          setTimeout(() => closeModal(), 2000);
+        }, minutes * 60000);
+        setSleepTimerId(timer);
+      } else if (sleepTimerId) {
+        clearTimeout(sleepTimerId);
+        setSleepTimerId(null);
+      }
+    };
+
+    const updateUserName = (newName) => {
+      setUser({ ...user, name: newName });
+    };
+
+    const updateFavoriteThemes = (themes) => {
+      setUser({ ...user, favoriteThemes: themes });
+    };
+
+    const logout = () => {
+      setUser({ name: 'Dreamer', favoriteThemes: [] });
+      setFavorites([]);
+    };
+
+    const handleNewClick = () => {
+      setActiveFilter('New');
+      setTimeout(() => {
+        const storiesSection = document.querySelector('.stories-section');
+        if (storiesSection) storiesSection.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    };
+
+    const getFilteredStories = () => {
+      if (activeFilter === 'New') return ALL_STORIES.filter(s => s.isNew === true);
+      return ALL_STORIES.filter(s => s.category === activeFilter);
+    };
+
+    const filteredStories = getFilteredStories();
+    const favoriteStories = ALL_STORIES.filter(s => favorites.includes(s.id));
+
+    return (
+      <div className="relative max-w-[430px] mx-auto bg-transparent min-h-screen overflow-x-hidden">
+        <div className={`sleep-dimmer ${sleepModeActive ? 'active' : ''}`} />
+        <StarField />
+        <Header onOpenProfile={() => setActiveTab('profile')} />
+        <div className="pb-24">
+          {activeTab === 'home' && (
+            <div className="space-y-6">
+              <Hero onNewClick={handleNewClick} />
+              <BackgroundSoundSelector
+                activeSound={activeSound}
+                onSelectSound={setActiveSound}
+                volume={soundVolume}
+                onVolumeChange={setSoundVolume}
+              />
+              <CategoryPills activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+              <div className="px-4 stories-section">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-white font-semibold text-lg">
+                    {activeFilter === 'New' ? '✨ New Stories' : 'Featured Stories'}
+                  </h3>
+                  <button className="text-yellow-400 text-xs">See all →</button>
+                </div>
+                <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide">
+                  {filteredStories.map(story => (
+                    <StoryCard
+                      key={story.id}
+                      story={story}
+                      onOpen={openStory}
+                      onToggleFavorite={toggleFavorite}
+                      isFavorite={favorites.includes(story.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="px-4">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-white font-semibold text-lg">Continue Reading</h3>
+                  <button className="text-yellow-400 text-xs">Resume all →</button>
+                </div>
+                <div className="flex flex-col gap-4">
+                  {CONTINUE_READING.map(item => {
+                    const story = ALL_STORIES.find(s => s.id === item.id);
+                    return (
+                      <ContinueCard
+                        key={item.id}
+                        item={item}
+                        story={story}
+                        onOpen={openStory}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'library' && (
+            <div className="pt-2">
+              <div className="px-4 mb-3">
+                <h2 className="text-white text-xl font-bold">📚 All Stories</h2>
+                <p className="text-indigo-200 text-sm">Choose a story to read tonight</p>
+              </div>
+              <StoryGrid
+                stories={ALL_STORIES}
+                onOpen={openStory}
+                onToggleFavorite={toggleFavorite}
+                favorites={favorites}
+              />
+            </div>
+          )}
+          {activeTab === 'favorites' && (
+            <div className="pt-2">
+              <div className="px-4 mb-3">
+                <h2 className="text-white text-xl font-bold">❤️ Your Favorites</h2>
+                <p className="text-indigo-200 text-sm">Stories you've saved for cozy nights</p>
+              </div>
+              {favoriteStories.length === 0 ? (
+                <div className="text-center py-12 px-4">
+                  <div className="text-5xl mb-3">❤️</div>
+                  <p className="text-white/60">No favorites yet. Tap the heart on any story to save it here.</p>
+                </div>
+              ) : (
+                <StoryGrid
+                  stories={favoriteStories}
+                  onOpen={openStory}
+                  onToggleFavorite={toggleFavorite}
+                  favorites={favorites}
+                />
+              )}
+            </div>
+          )}
+          {activeTab === 'profile' && (
+            <ProfileTab
+              user={user}
+              favorites={favorites}
+              progress={progress}
+              badges={badges}
+              onUpdateName={updateUserName}
+              onUpdateFavoriteThemes={updateFavoriteThemes}
+              onLogout={logout}
+            />
+          )}
+        </div>
+        <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+        <StoryModal
+          story={selectedStory}
+          isOpen={modalOpen}
+          onClose={closeModal}
+          onPlayVoice={startVoiceForStory}
+          voiceState={voice}
+          onSetTimer={startSleepTimer}
+          userName={user.name}
+        />
+      </div>
+    );
+  };
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
