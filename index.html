@@ -33,7 +33,6 @@
       animation: twinkle 3s infinite alternate, float 20s linear infinite;
     }
     @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(245, 176, 66, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(245, 176, 66, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 176, 66, 0); } }
-    .play-btn { animation: pulseGlow 2.5s infinite; }
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; padding: 0.5rem; }
@@ -72,6 +71,20 @@
       0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
       80% { opacity: 1; }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+    }
+    /* Sidebar & responsive adjustments */
+    .sidebar {
+      transition: transform 0.3s ease;
+    }
+    @media (max-width: 767px) {
+      .sidebar {
+        transform: translateX(-100%);
+        position: fixed;
+        z-index: 50;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
@@ -167,7 +180,7 @@
     return canvas.toDataURL();
   }
 
-  // ---------- ENHANCED VOICE HOOK with dynamic rate & fixed overlap ----------
+  // ---------- ENHANCED VOICE HOOK ----------
   const useVoiceSynthesis = () => {
     const [voices, setVoices] = React.useState([]);
     const [isPlaying, setIsPlaying] = React.useState(false);
@@ -277,13 +290,71 @@
     return (<div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-indigo-950 to-black"><div className="w-full max-w-md bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10"><h2 className="text-2xl font-bold text-white text-center mb-6">{isSignUp ? "Create Account" : "Welcome Back"}</h2><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} /><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />{isSignUp && (<><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" placeholder="Nickname" value={nickname} onChange={e => setNickname(e.target.value)} /><select className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" value={age} onChange={e => setAge(e.target.value)}><option value="2-4">Age 2–4</option><option value="4-6">Age 4–6</option><option value="6-8">Age 6–8</option><option value="8-10">Age 8–10</option></select><div className="flex gap-2 mb-3 flex-wrap">{avatars.map(av => (<button key={av} onClick={() => setAvatar(av)} className={`text-2xl p-2 rounded-full ${avatar === av ? 'bg-yellow-400/30 border border-yellow-400' : 'bg-white/10'}`}>{av}</button>))}</div></>)}<p className="text-red-400 text-sm mb-3">{error}</p><button onClick={handleAuth} disabled={loading} className="w-full py-3 bg-yellow-400 text-indigo-950 font-bold rounded-full hover:bg-yellow-500 transition">{loading ? "Please wait..." : (isSignUp ? "Sign Up" : "Login")}</button><p className="text-center text-white/60 mt-4">{isSignUp ? "Already have an account?" : "New to Kulala?"} <button onClick={() => setIsSignUp(!isSignUp)} className="text-yellow-400">{isSignUp ? "Login" : "Sign Up"}</button></p></div></div>);
   };
 
-  // ---------- COMPONENTS ----------
+  // ---------- NEW NAVIGATION COMPONENTS ----------
   const StarField = () => (<div className="fixed inset-0 pointer-events-none overflow-hidden">{[...Array(60)].map((_, i) => (<div key={i} className="star absolute bg-white rounded-full" style={{ width: Math.random() * 3 + 1 + 'px', height: Math.random() * 3 + 1 + 'px', left: Math.random() * 100 + '%', top: Math.random() * 100 + '%', animationDelay: Math.random() * 5 + 's' }} />))}</div>);
-  const Header = ({ userProfile, isPremium, onUpgrade, onOpenProfile, calmMode, setCalmMode }) => (<div className="glass-nav sticky top-0 z-20 px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"><div className="flex items-center gap-2"><div className="text-2xl text-yellow-300 drop-shadow-lg">🌙</div><h1 className="text-xl md:text-2xl font-bold tracking-wide text-white" style={{ fontFamily: 'Quicksand, sans-serif' }}>Kulala</h1>{!isPremium && <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">Free</span>}</div><div className="flex gap-2"><button onClick={() => setCalmMode(!calmMode)} className="text-white/60 hover:text-yellow-400 transition text-sm px-2 py-1 rounded-full bg-white/10">{calmMode ? "🌿 Calm On" : "🌿 Calm"}</button><button onClick={onOpenProfile} className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 text-white/80 hover:bg-white/20 transition"><span>{userProfile?.avatar || "👤"}</span><span className="text-sm hidden sm:inline">{userProfile?.nickname || "Profile"}</span></button>{!isPremium && <button onClick={onUpgrade} className="premium-badge text-indigo-950 text-xs font-bold px-3 py-1 rounded-full shadow-md">Upgrade ✨</button>}</div></div>);
+  
+  const Header = ({ userProfile, isPremium, onUpgrade, onOpenProfile, calmMode, setCalmMode, onMenuToggle }) => (<div className="glass-nav sticky top-0 z-20 px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"><div className="flex items-center gap-2"><button onClick={onMenuToggle} className="md:hidden text-white text-2xl">☰</button><div className="text-2xl text-yellow-300 drop-shadow-lg">🌙</div><h1 className="text-xl md:text-2xl font-bold tracking-wide text-white" style={{ fontFamily: 'Quicksand, sans-serif' }}>Kulala</h1>{!isPremium && <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">Free</span>}</div><div className="flex gap-2"><button onClick={() => setCalmMode(!calmMode)} className="text-white/60 hover:text-yellow-400 transition text-sm px-2 py-1 rounded-full bg-white/10">{calmMode ? "🌿 Calm On" : "🌿 Calm"}</button><button onClick={onOpenProfile} className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 text-white/80 hover:bg-white/20 transition"><span>{userProfile?.avatar || "👤"}</span><span className="text-sm hidden sm:inline">{userProfile?.nickname || "Profile"}</span></button>{!isPremium && <button onClick={onUpgrade} className="premium-badge text-indigo-950 text-xs font-bold px-3 py-1 rounded-full shadow-md">Upgrade ✨</button>}</div></div>);
+  
+  const Sidebar = ({ activeTab, setActiveTab, isOpen, onClose }) => (
+    <div className={`sidebar fixed top-0 left-0 h-full w-64 bg-black/90 backdrop-blur-xl border-r border-white/10 p-5 z-50 flex flex-col ${isOpen ? 'open' : ''} md:open md:translate-x-0`}>
+      <div className="flex justify-between items-center mb-8 md:hidden">
+        <h1 className="text-white text-2xl font-bold">🌙 Kulala</h1>
+        <button onClick={onClose} className="text-white text-2xl">✕</button>
+      </div>
+      <h1 className="hidden md:block text-white text-2xl font-bold mb-8">🌙 Kulala</h1>
+      {[
+        { name: "home", label: "Home", icon: "🏠" },
+        { name: "library", label: "Library", icon: "📚" },
+        { name: "favorites", label: "Saved", icon: "❤️" },
+        { name: "profile", label: "Profile", icon: "👤" }
+      ].map(tab => (
+        <button
+          key={tab.name}
+          onClick={() => { setActiveTab(tab.name); onClose(); }}
+          className={`flex items-center gap-3 px-5 py-3 rounded-xl mb-2 text-left transition ${
+            activeTab === tab.name ? "bg-yellow-400 text-black" : "text-white/80 hover:bg-white/10"
+          }`}
+        >
+          <span className="text-xl">{tab.icon}</span>
+          <span className="font-medium">{tab.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  const MobileBottomNav = ({ activeTab, setActiveTab }) => (
+    <div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-xl border-t border-white/10 py-3 z-40 md:hidden">
+      <div className="flex justify-around items-center">
+        {[
+          { name: "home", icon: "🏠", label: "Home" },
+          { name: "library", icon: "📚", label: "Library" },
+          { name: "favorites", icon: "❤️", label: "Saved" },
+          { name: "profile", icon: "👤", label: "Profile" }
+        ].map(tab => (
+          <button
+            key={tab.name}
+            onClick={() => setActiveTab(tab.name)}
+            className={`flex flex-col items-center py-1 px-4 rounded-full transition ${
+              activeTab === tab.name ? "text-yellow-400" : "text-white/70"
+            }`}
+          >
+            <span className="text-2xl">{tab.icon}</span>
+            <span className="text-xs mt-1">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ---------- REMAINING COMPONENTS (unchanged) ----------
   const HeroBanner = ({ story, onPlay }) => (<div className="relative h-[60vh] rounded-3xl overflow-hidden mb-8 mx-4 md:mx-8"><img src={story.cover} className="absolute inset-0 w-full h-full object-cover" onError={(e) => e.target.src = generateFallbackCover(story.title, story.category)} /><div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" /><div className="absolute bottom-6 left-6 max-w-lg z-10"><h1 className="text-white text-3xl md:text-4xl font-bold story-title">{story.title}</h1><p className="text-white/80 mt-2 text-sm">{story.readTime} • {story.category}</p><div className="flex gap-3 mt-4"><button onClick={onPlay} className="px-6 py-2 bg-white text-black rounded-full font-semibold hover:bg-gray-200 transition thumb-button">▶ Play</button><button className="px-6 py-2 bg-white/20 text-white rounded-full hover:bg-white/30 transition">+ My List</button></div></div></div>);
+  
   const StoryRow = ({ title, stories, onOpen, isPremium }) => { if (!stories.length) return null; return (<div className="mb-8 px-4 md:px-8"><h3 className="text-white text-lg md:text-xl font-bold mb-3 story-title">{title}</h3><div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">{stories.map(story => { const handleClick = () => { if (story.isPremium && !isPremium) { alert("✨ Upgrade to Premium to unlock this magical story!"); return; } onOpen(story); }; return (<div key={story.id} className="min-w-[140px] md:min-w-[180px] cursor-pointer row-hover-scale" onClick={handleClick}><div className="relative rounded-xl overflow-hidden group"><img src={story.cover} className="w-full h-44 md:h-56 object-cover transition duration-500 group-hover:scale-110" onError={(e) => e.target.src = generateFallbackCover(story.title, story.category)} />{story.isPremium && !isPremium && <div className="absolute inset-0 bg-black/60 flex items-center justify-center"><div className="text-center"><div className="text-yellow-400 text-lg">🔒</div><p className="text-white text-xs">Premium</p></div></div>}{story.isPremium && <div className="absolute top-2 right-2 premium-badge text-indigo-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">✨ PREMIUM</div>}<div className="absolute bottom-2 left-2 text-2xl opacity-80">{story.icon || "📖"}</div></div><p className="text-white text-sm mt-2 truncate font-medium">{story.title}</p></div>); })}</div></div>); };
+  
   const ContinueRow = ({ items, stories, onOpen, isPremium }) => { if (!items.length) return null; return (<div className="mb-8 px-4 md:px-8"><h3 className="text-white text-lg md:text-xl font-bold mb-3 story-title">Continue Listening</h3><div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4">{items.map(item => { const story = stories.find(s => s.id === item.id); if (!story) return null; const handleClick = () => { if (item.isPremium && !isPremium) { alert("✨ Upgrade to Premium to continue this story!"); return; } onOpen(story); }; return (<div key={item.id} className="min-w-[140px] md:min-w-[180px] cursor-pointer" onClick={handleClick}><div className="relative rounded-xl overflow-hidden"><img src={item.cover} className="w-full h-44 md:h-56 object-cover" onError={(e) => e.target.src = generateFallbackCover(item.title, story.category)} /><div className="absolute bottom-0 left-0 right-0 h-1 bg-yellow-400" style={{ width: `${item.progress}%` }}></div></div><p className="text-white text-sm mt-2 truncate font-medium">{item.title}</p><p className="text-yellow-300 text-xs">{item.progress}% complete</p></div>); })}</div></div>); };
+  
   const VoicePlayer = ({ sentences, isPlaying, isPaused, currentIndex, onPlay, onPause, onResume, onSetTimer, voiceType, setVoiceType, accent, setAccent, showMoral, setShowMoral, moralText, sleepTimerRemaining, calmMode, onBedtimeMode }) => { const progress = sentences.length ? (currentIndex / sentences.length) * 100 : 0; return (<div className="voice-player bg-[#1c1c3a] rounded-xl p-4 m-3"><div className="flex items-center gap-3 flex-wrap"><button onClick={isPlaying ? (isPaused ? onResume : onPause) : onPlay} className="w-12 h-12 rounded-full bg-yellow-400 text-indigo-950 flex items-center justify-center text-xl thumb-button">{isPlaying ? (isPaused ? "▶" : "⏸") : "▶"}</button><div className="flex-1"><div className="text-yellow-300 text-xs font-semibold">🎙 Maji Narrator</div><div className="text-white/70 text-xs">African voices + accent</div></div><select onChange={(e) => onSetTimer(parseInt(e.target.value))} className="bg-black/30 border border-white/20 rounded-full text-xs px-2 py-1 text-white"><option value="0">Sleep timer</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="30">30 min</option></select><button onClick={onBedtimeMode} className="bg-indigo-800/50 text-white text-xs px-2 py-1 rounded-full">🌙 Bedtime Mode</button></div><div className="flex gap-2 mt-3 flex-wrap"><select value={voiceType} onChange={(e) => setVoiceType(e.target.value)} className="bg-black/30 border border-white/20 rounded-full text-xs px-2 py-1 text-white"><option value="male">Male Narrator</option><option value="female">Female Narrator</option><option value="elder">Elder Voice</option></select><select value={accent} onChange={(e) => setAccent(e.target.value)} className="bg-black/30 border border-white/20 rounded-full text-xs px-2 py-1 text-white"><option value="west">West African</option><option value="east">East African</option><option value="southern">Southern African</option></select><label className="flex items-center gap-1 text-white/70 text-xs"><input type="checkbox" checked={showMoral} onChange={(e) => setShowMoral(e.target.checked)} /> 📖 Show Moral</label></div><div className="mt-3 h-1 bg-white/20 rounded-full overflow-hidden"><div className="h-full bg-yellow-400 rounded-full" style={{ width: `${progress}%` }} /></div><div className="flex justify-between mt-2 text-[10px] text-white/40"><span>{currentIndex}/{sentences.length} sentences</span>{sleepTimerRemaining > 0 && <span className="text-yellow-300">⏳ Sleeping in {sleepTimerRemaining} min</span>}</div>{showMoral && moralText && !isPlaying && currentIndex >= sentences.length && <div className="mt-2 text-yellow-300 text-xs italic">{moralText}</div>}</div>); };
+  
   const StoryModal = ({ story, isOpen, onClose, onPlayVoice, voiceState, onSetTimer, userName, voiceType, setVoiceType, accent, setAccent, showMoral, setShowMoral, sleepTimerRemaining, calmMode, onComplete, onProgressUpdate, onBedtimeMode }) => {
     const [sentences, setSentences] = React.useState([]);
     const [moralText, setMoralText] = React.useState("");
@@ -294,7 +365,9 @@
     const modalBg = story.cover || generateFallbackCover(story.title, story.category);
     return (<div className="modal-overlay open" onClick={onClose}><div className="story-modal" onClick={e => e.stopPropagation()}><div className="modal-header relative h-44 md:h-56 bg-cover bg-center rounded-t-2xl" style={{ backgroundImage: `url(${modalBg})` }}><div className="absolute inset-0 bg-gradient-to-t from-[#12122c] to-transparent rounded-t-2xl" /><button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white" onClick={onClose}>✕</button><h2 className="absolute bottom-4 left-4 text-white text-xl md:text-2xl font-bold story-title">{story.title}</h2></div><VoicePlayer sentences={sentences} isPlaying={voiceState.isPlaying} isPaused={voiceState.isPaused} currentIndex={voiceState.currentSentenceIndex} onPlay={() => onPlayVoice(sentences, voiceType, accent, handleSentenceChange, handleComplete)} onPause={voiceState.pause} onResume={voiceState.resume} onSetTimer={onSetTimer} voiceType={voiceType} setVoiceType={setVoiceType} accent={accent} setAccent={setAccent} showMoral={showMoral} setShowMoral={setShowMoral} moralText={moralText} sleepTimerRemaining={sleepTimerRemaining} calmMode={calmMode} onBedtimeMode={onBedtimeMode} /><div className="story-text p-4 text-white/90 leading-relaxed text-sm md:text-base">{sentences.map((s, i) => (<p key={i} className={`mb-3 transition-colors ${voiceState.currentSentenceIndex === i ? 'active-sentence' : ''}`}>{s}</p>))}</div></div></div>);
   };
+  
   const ProfileTab = ({ userProfile, favorites, progress, badges, isPremium, onUpgrade, onUpdateProfile, onLogout }) => { const [tempName, setTempName] = React.useState(userProfile?.nickname || ""); const [tempAge, setTempAge] = React.useState(userProfile?.age || "4-6"); const [tempAvatar, setTempAvatar] = React.useState(userProfile?.avatar || "🌙"); const avatars = ["🌙", "🦁", "🐘", "🦒", "🐒", "⭐", "🌳", "🦉"]; const saveProfile = () => { onUpdateProfile({ nickname: tempName, age: tempAge, avatar: tempAvatar }); }; return (<div className="max-w-2xl mx-auto"><div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 space-y-4"><div className="flex items-center gap-3"><div className="text-5xl">{tempAvatar}</div><div><h2 className="text-white text-xl md:text-2xl font-bold story-title">{tempName || "Dreamer"}</h2><p className="text-indigo-200 text-sm md:text-base">{isPremium ? "✨ Premium Member" : "Free Member"}</p></div></div>{!isPremium && <button onClick={onUpgrade} className="w-full premium-badge text-indigo-950 font-bold py-2 rounded-full shadow-lg">⭐ Upgrade to Premium (Unlock All Stories)</button>}<div className="border-t border-white/10 pt-4 space-y-3"><div><label className="text-white/80 text-sm md:text-base">Nickname</label><input type="text" value={tempName} onChange={(e) => setTempName(e.target.value)} className="w-full mt-1 bg-white/10 rounded-full px-3 py-2 text-white text-sm md:text-base" /></div><div><label className="text-white/80 text-sm md:text-base">Age</label><select value={tempAge} onChange={(e) => setTempAge(e.target.value)} className="w-full mt-1 bg-white/10 rounded-full px-3 py-2 text-white text-sm md:text-base"><option value="2-4">2–4</option><option value="4-6">4–6</option><option value="6-8">6–8</option><option value="8-10">8–10</option></select></div><div><label className="text-white/80 text-sm md:text-base">Avatar</label><div className="flex flex-wrap gap-2 mt-1">{avatars.map(av => (<button key={av} onClick={() => setTempAvatar(av)} className={`text-2xl p-2 rounded-full ${tempAvatar === av ? 'bg-yellow-400/30 border border-yellow-400' : 'bg-white/10'}`}>{av}</button>))}</div></div><button onClick={saveProfile} className="w-full py-2 bg-yellow-400/20 rounded-full text-yellow-300 text-sm md:text-base">Save Profile</button></div><div className="border-t border-white/10 pt-4"><h3 className="text-white font-semibold text-sm md:text-base mb-2">🏆 Achievements & Streaks</h3><div className="flex justify-between mb-2"><span className="text-white/70 text-xs md:text-sm">Current Streak</span><span className="text-yellow-400 font-bold text-sm md:text-base">{progress.streak} days 🔥</span></div><div className="flex justify-between mb-2"><span className="text-white/70 text-xs md:text-sm">Total Stories Read</span><span className="text-yellow-400 font-bold text-sm md:text-base">{progress.totalStoriesRead}</span></div><div className="flex flex-wrap gap-2 mt-2">{badges.map(badge => (<div key={badge.id} className="bg-white/10 rounded-full px-2 py-1 text-xs flex items-center gap-1"><span>{badge.icon}</span> <span className="text-white/80">{badge.name}</span></div>))}{badges.length === 0 && <span className="text-white/40 text-xs">Complete stories to earn badges ✨</span>}</div></div><button onClick={onLogout} className="w-full py-2 bg-red-500/20 rounded-full text-red-300 text-sm md:text-base mt-2">Sign Out</button></div><div className="mt-4 text-center text-xs text-white/40">⭐ Maji Series · Season 1</div></div>); };
+  
   const BackgroundSoundSelector = ({ activeSound, onSelectSound, volume, onVolumeChange, isPlaying }) => { const handleVolumeChange = (val) => { onVolumeChange(val); }; return (<div className="bg-white/5 rounded-xl p-3 mx-4 md:mx-8 mb-6"><div className="text-yellow-300 text-xs md:text-sm font-semibold mb-2">🎵 Background Sounds</div><div className="flex gap-2 flex-wrap">{Object.keys(SOUNDS).map(sound => (<button key={sound} onClick={() => onSelectSound(sound)} className={`px-3 py-1 rounded-full text-xs md:text-sm capitalize transition ${activeSound === sound ? 'bg-yellow-400 text-indigo-950' : 'bg-white/10 text-white/80'}`}>{sound}</button>))}{activeSound && <button onClick={() => onSelectSound(null)} className="px-3 py-1 rounded-full text-xs bg-red-500/20 text-red-300">Stop</button>}</div><div className="mt-2 flex items-center gap-2"><span className="text-white/60 text-xs">Volume</span><input type="range" min="0" max="1" step="0.05" value={volume} onChange={(e) => handleVolumeChange(parseFloat(e.target.value))} className="flex-1 h-1 bg-white/20 rounded-full" /></div></div>); };
 
   const showStreakMessage = (streak) => {
@@ -311,6 +384,7 @@
     const [userProfile, setUserProfile] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [activeTab, setActiveTab] = React.useState('home');
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
     const [favorites, setFavorites] = React.useState(() => { const saved = localStorage.getItem('kulala_favorites'); return saved ? JSON.parse(saved) : []; });
     const [progress, setProgress] = React.useState(() => { const saved = localStorage.getItem('kulala_progress'); return saved ? JSON.parse(saved) : { streak: 0, lastReadDate: null, totalStoriesRead: 0, categoryReads: {}, nightReads: 0, storyProgress: {} }; });
     const [badges, setBadges] = React.useState(() => { const saved = localStorage.getItem('kulala_badges'); return saved ? JSON.parse(saved) : []; });
@@ -337,16 +411,14 @@
     React.useEffect(() => {
       if (!bedtimeMode) return;
       let start = Date.now();
-      const duration = 2 * 60 * 1000; // 2 minutes
+      const duration = 2 * 60 * 1000;
       const interval = setInterval(() => {
         const elapsed = Date.now() - start;
         const progressVal = Math.min(elapsed / duration, 1);
         setBedtimeProgress(progressVal);
         const dimmer = document.querySelector('.sleep-dimmer');
         if (dimmer) dimmer.style.opacity = 0.3 + progressVal * 0.5;
-        if (audioRef.current) {
-          audioRef.current.volume = soundVolume * (1 - progressVal * 0.8);
-        }
+        if (audioRef.current) audioRef.current.volume = soundVolume * (1 - progressVal * 0.8);
         voice.setRate(0.85 - progressVal * 0.25);
         if (progressVal >= 1) {
           voice.stop();
@@ -359,7 +431,6 @@
       return () => clearInterval(interval);
     }, [bedtimeMode]);
 
-    // Timer countdown
     React.useEffect(() => {
       if (!sleepEndTime) return;
       const interval = setInterval(() => {
@@ -400,10 +471,8 @@
     React.useEffect(() => { localStorage.setItem('kulala_badges', JSON.stringify(badges)); }, [badges]);
     React.useEffect(() => { localStorage.setItem('kulala_premium', isPremium); }, [isPremium]);
 
-    // Background sound
     React.useEffect(() => { if (activeSound && SOUNDS[activeSound]) { if (audioRef.current) audioRef.current.pause(); const audio = new Audio(SOUNDS[activeSound]); audio.loop = true; audio.volume = soundVolume; audio.play(); audioRef.current = audio; } else { if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; } } return () => { if (audioRef.current) audioRef.current.pause(); }; }, [activeSound, soundVolume]);
 
-    // Lucide icons
     React.useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, [activeTab]);
 
     const updateStoryProgress = (story, percentage) => {
@@ -495,53 +564,42 @@
       <div className="relative min-h-screen bg-black">
         <div className={`sleep-dimmer ${sleepModeActive ? 'active' : ''}`} style={{ opacity: bedtimeProgress * 0.7 }} />
         <StarField />
-        <Header userProfile={userProfile} isPremium={isPremium} onUpgrade={upgradeToPremium} onOpenProfile={() => setActiveTab('profile')} calmMode={calmMode} setCalmMode={setCalmMode} />
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Header userProfile={userProfile} isPremium={isPremium} onUpgrade={upgradeToPremium} onOpenProfile={() => { setActiveTab('profile'); setSidebarOpen(false); }} calmMode={calmMode} setCalmMode={setCalmMode} onMenuToggle={() => setSidebarOpen(true)} />
         
-        {activeTab === 'home' && (
-          <div className="pb-28">
-            <HeroBanner story={featuredStory} onPlay={() => openStory(featuredStory)} />
-            <BackgroundSoundSelector activeSound={activeSound} onSelectSound={setActiveSound} volume={soundVolume} onVolumeChange={setSoundVolume} isPlaying={voice.isPlaying} />
-            <ContinueRow items={continueItems} stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
-            <StoryRow title="✨ New Stories" stories={newStories} onOpen={openStory} isPremium={isPremium} />
-            <StoryRow title="🌟 Popular Now" stories={popularStories} onOpen={openStory} isPremium={isPremium} />
-            {!isPremium && premiumStories.length > 0 && <StoryRow title="⭐ Premium Picks" stories={premiumStories} onOpen={openStory} isPremium={isPremium} />}
-            <StoryRow title="📚 All Stories" stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
-            <div className="text-center my-4"><button onClick={downloadOffline} className="bg-white/10 text-white/80 px-4 py-2 rounded-full text-sm">📱 Download for offline (Premium)</button></div>
-          </div>
-        )}
-        {activeTab === 'library' && (
-          <div className="px-4 md:px-8 pb-28 pt-4">
-            <h2 className="text-white text-2xl font-bold mb-4">📚 Your Library</h2>
-            <StoryRow title="All Stories" stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
-          </div>
-        )}
-        {activeTab === 'favorites' && (
-          <div className="px-4 md:px-8 pb-28 pt-4">
-            <h2 className="text-white text-2xl font-bold mb-4">❤️ Your Favorites</h2>
-            {favorites.length === 0 ? (<div className="text-center py-12"><div className="text-5xl mb-3">❤️</div><p className="text-white/60">No favorites yet. Tap the heart on any story to save it here.</p></div>) : (<StoryRow title="Saved Stories" stories={ALL_STORIES.filter(s => favorites.includes(s.id))} onOpen={openStory} isPremium={isPremium} />)}
-          </div>
-        )}
-        {activeTab === 'profile' && (
-          <div className="px-4 md:px-8 pb-28 pt-4 max-w-2xl mx-auto">
-            <ProfileTab userProfile={userProfile} favorites={favorites} progress={progress} badges={badges} isPremium={isPremium} onUpgrade={upgradeToPremium} onUpdateProfile={updateUserProfile} onLogout={logout} />
-          </div>
-        )}
-        
-        <button onClick={() => setActiveTab('home')} className="play-btn fixed bottom-20 left-1/2 -translate-x-1/2 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500 text-indigo-950 text-xl shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition thumb-button">▶</button>
-        
-        <div className="fixed bottom-4 left-0 right-0 flex justify-center z-50">
-          <div className="relative flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 backdrop-blur-3xl border border-white/20 shadow-[0_10px_40px_rgba(0,0,0,0.6)]">
-            {[
-              { name: "home", icon: "home", label: "Home" },
-              { name: "library", icon: "book-open", label: "Library" },
-              { name: "favorites", icon: "heart", label: "Saved" },
-              { name: "profile", icon: "user", label: "Profile" }
-            ].map(tab => {
-              const isActive = activeTab === tab.name;
-              return (<button key={tab.name} onClick={() => setActiveTab(tab.name)} className="dock-button relative flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-all duration-300 group">{isActive && <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-yellow-400/20 blur-md -z-0" />}<span className={`z-10 transition-all duration-300 ${isActive ? "text-yellow-400 scale-110" : "text-white/60 group-hover:text-white/80"}`}><i data-lucide={tab.icon} className="w-5 h-5"></i></span><span className={`text-[10px] mt-1 transition-all duration-200 ${isActive ? "opacity-100 text-yellow-400" : "opacity-0 group-hover:opacity-100 text-white/60"}`}>{tab.label}</span></button>);
-            })}
-          </div>
+        <div className="md:ml-64 pb-20">
+          {activeTab === 'home' && (
+            <div>
+              <HeroBanner story={featuredStory} onPlay={() => openStory(featuredStory)} />
+              <BackgroundSoundSelector activeSound={activeSound} onSelectSound={setActiveSound} volume={soundVolume} onVolumeChange={setSoundVolume} isPlaying={voice.isPlaying} />
+              <ContinueRow items={continueItems} stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
+              <StoryRow title="✨ New Stories" stories={newStories} onOpen={openStory} isPremium={isPremium} />
+              <StoryRow title="🌟 Popular Now" stories={popularStories} onOpen={openStory} isPremium={isPremium} />
+              {!isPremium && premiumStories.length > 0 && <StoryRow title="⭐ Premium Picks" stories={premiumStories} onOpen={openStory} isPremium={isPremium} />}
+              <StoryRow title="📚 All Stories" stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
+              <div className="text-center my-4"><button onClick={downloadOffline} className="bg-white/10 text-white/80 px-4 py-2 rounded-full text-sm">📱 Download for offline (Premium)</button></div>
+            </div>
+          )}
+          {activeTab === 'library' && (
+            <div className="px-4 md:px-8 pt-4">
+              <h2 className="text-white text-2xl font-bold mb-4">📚 Your Library</h2>
+              <StoryRow title="All Stories" stories={ALL_STORIES} onOpen={openStory} isPremium={isPremium} />
+            </div>
+          )}
+          {activeTab === 'favorites' && (
+            <div className="px-4 md:px-8 pt-4">
+              <h2 className="text-white text-2xl font-bold mb-4">❤️ Your Favorites</h2>
+              {favorites.length === 0 ? (<div className="text-center py-12"><div className="text-5xl mb-3">❤️</div><p className="text-white/60">No favorites yet. Tap the heart on any story to save it here.</p></div>) : (<StoryRow title="Saved Stories" stories={ALL_STORIES.filter(s => favorites.includes(s.id))} onOpen={openStory} isPremium={isPremium} />)}
+            </div>
+          )}
+          {activeTab === 'profile' && (
+            <div className="px-4 md:px-8 pt-4 max-w-2xl mx-auto">
+              <ProfileTab userProfile={userProfile} favorites={favorites} progress={progress} badges={badges} isPremium={isPremium} onUpgrade={upgradeToPremium} onUpdateProfile={updateUserProfile} onLogout={logout} />
+            </div>
+          )}
         </div>
+
+        <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
         
         <StoryModal story={selectedStory} isOpen={modalOpen} onClose={closeModal} onPlayVoice={startVoiceForStory} voiceState={voice} onSetTimer={startSleepTimer} userName={userProfile?.nickname || "little one"} voiceType={voiceType} setVoiceType={setVoiceType} accent={accent} setAccent={setAccent} showMoral={showMoral} setShowMoral={setShowMoral} sleepTimerRemaining={sleepTimerRemaining} calmMode={calmMode} onComplete={() => { if (selectedStory) updateStoryProgress(selectedStory, 100); }} onProgressUpdate={(percent) => { if (selectedStory) updateStoryProgress(selectedStory, percent); }} onBedtimeMode={() => setBedtimeMode(true)} />
       </div>
