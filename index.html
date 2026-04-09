@@ -24,7 +24,6 @@
     body { font-family: 'Nunito', 'Quicksand', sans-serif; background: #0a0a1a; margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; }
     .glass { background: rgba(255, 255, 255, 0.06); backdrop-filter: blur(20px) saturate(180%); border-bottom: 1px solid rgba(255,255,255,0.12); }
     .glass-nav { background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); }
-    /* Merged star animation */
     @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
     @keyframes float { from { transform: translateY(0); } to { transform: translateY(-20px); } }
     .star {
@@ -93,7 +92,7 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // ----------------------------- DATA (unchanged) -----------------------------
+  // ----------------------------- DATA -----------------------------
   const MAJI_EPISODES = [
     { id: 1001, title: "Maji and the Whispering Baobab", cover: "/images/covers/maji_and_the_whispering_baobab.png", age: "6–9", readTime: "7 min", author: "Maji Series", category: "Adventure", body: "Maji was eleven seasons old when she first heard the baobab speak...", isNew: true, isPremium: false, moral: "✨ Lesson: Listen before you act.", icon: "🌳" },
     { id: 1002, title: "Maji and the River of Patience", cover: "/images/covers/maji_and_the_river_of_patience.png", age: "5–8", readTime: "6 min", author: "Maji Series", category: "Calm", body: "The River Nyota shimmered like silver under the sun...", isNew: true, isPremium: false, moral: "✨ Lesson: Good things take time.", icon: "🌊" },
@@ -197,7 +196,6 @@
 
     const speakSentences = async (sentences, options = { rate: 0.85, pitch: 1.0, voiceType: "female", accent: "west" }, onSentenceChange, onComplete) => {
       if (!sentences.length) return;
-      // Fix overlap: cancel and wait a tiny buffer
       if (utteranceRef.current) {
         synth.cancel();
         utteranceRef.current = null;
@@ -208,6 +206,7 @@
       if (options.voiceType === "female") selectedVoice = voices.find(v => v.name.toLowerCase().includes("female") || v.name.toLowerCase().includes("samantha") || v.name.toLowerCase().includes("victoria")) || voices[0];
       else if (options.voiceType === "elder") selectedVoice = voices.find(v => v.name.toLowerCase().includes("english") || v.name.toLowerCase().includes("daniel") || v.name.toLowerCase().includes("alex")) || voices[0];
       else selectedVoice = voices.find(v => v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("google")) || voices[0];
+
       let index = 0;
       const speakNext = () => {
         if (index >= sentences.length) {
@@ -249,7 +248,7 @@
     return { voices, isPlaying, isPaused, currentSentenceIndex, speakSentences, pause, resume, stop, setRate };
   };
 
-  // ---------- AUTH SCREEN (unchanged) ----------
+  // ---------- AUTH SCREEN ----------
   const AuthScreen = ({ onLogin }) => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -278,7 +277,7 @@
     return (<div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-indigo-950 to-black"><div className="w-full max-w-md bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10"><h2 className="text-2xl font-bold text-white text-center mb-6">{isSignUp ? "Create Account" : "Welcome Back"}</h2><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} /><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />{isSignUp && (<><input className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" placeholder="Nickname" value={nickname} onChange={e => setNickname(e.target.value)} /><select className="w-full p-3 rounded-xl bg-black/30 border border-white/20 text-white mb-3" value={age} onChange={e => setAge(e.target.value)}><option value="2-4">Age 2–4</option><option value="4-6">Age 4–6</option><option value="6-8">Age 6–8</option><option value="8-10">Age 8–10</option></select><div className="flex gap-2 mb-3 flex-wrap">{avatars.map(av => (<button key={av} onClick={() => setAvatar(av)} className={`text-2xl p-2 rounded-full ${avatar === av ? 'bg-yellow-400/30 border border-yellow-400' : 'bg-white/10'}`}>{av}</button>))}</div></>)}<p className="text-red-400 text-sm mb-3">{error}</p><button onClick={handleAuth} disabled={loading} className="w-full py-3 bg-yellow-400 text-indigo-950 font-bold rounded-full hover:bg-yellow-500 transition">{loading ? "Please wait..." : (isSignUp ? "Sign Up" : "Login")}</button><p className="text-center text-white/60 mt-4">{isSignUp ? "Already have an account?" : "New to Kulala?"} <button onClick={() => setIsSignUp(!isSignUp)} className="text-yellow-400">{isSignUp ? "Login" : "Sign Up"}</button></p></div></div>);
   };
 
-  // ---------- NETFLIX-STYLE COMPONENTS (modified to pass bedtime mode) ----------
+  // ---------- COMPONENTS ----------
   const StarField = () => (<div className="fixed inset-0 pointer-events-none overflow-hidden">{[...Array(60)].map((_, i) => (<div key={i} className="star absolute bg-white rounded-full" style={{ width: Math.random() * 3 + 1 + 'px', height: Math.random() * 3 + 1 + 'px', left: Math.random() * 100 + '%', top: Math.random() * 100 + '%', animationDelay: Math.random() * 5 + 's' }} />))}</div>);
   const Header = ({ userProfile, isPremium, onUpgrade, onOpenProfile, calmMode, setCalmMode }) => (<div className="glass-nav sticky top-0 z-20 px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"><div className="flex items-center gap-2"><div className="text-2xl text-yellow-300 drop-shadow-lg">🌙</div><h1 className="text-xl md:text-2xl font-bold tracking-wide text-white" style={{ fontFamily: 'Quicksand, sans-serif' }}>Kulala</h1>{!isPremium && <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full">Free</span>}</div><div className="flex gap-2"><button onClick={() => setCalmMode(!calmMode)} className="text-white/60 hover:text-yellow-400 transition text-sm px-2 py-1 rounded-full bg-white/10">{calmMode ? "🌿 Calm On" : "🌿 Calm"}</button><button onClick={onOpenProfile} className="flex items-center gap-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-3 py-1 text-white/80 hover:bg-white/20 transition"><span>{userProfile?.avatar || "👤"}</span><span className="text-sm hidden sm:inline">{userProfile?.nickname || "Profile"}</span></button>{!isPremium && <button onClick={onUpgrade} className="premium-badge text-indigo-950 text-xs font-bold px-3 py-1 rounded-full shadow-md">Upgrade ✨</button>}</div></div>);
   const HeroBanner = ({ story, onPlay }) => (<div className="relative h-[60vh] rounded-3xl overflow-hidden mb-8 mx-4 md:mx-8"><img src={story.cover} className="absolute inset-0 w-full h-full object-cover" onError={(e) => e.target.src = generateFallbackCover(story.title, story.category)} /><div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" /><div className="absolute bottom-6 left-6 max-w-lg z-10"><h1 className="text-white text-3xl md:text-4xl font-bold story-title">{story.title}</h1><p className="text-white/80 mt-2 text-sm">{story.readTime} • {story.category}</p><div className="flex gap-3 mt-4"><button onClick={onPlay} className="px-6 py-2 bg-white text-black rounded-full font-semibold hover:bg-gray-200 transition thumb-button">▶ Play</button><button className="px-6 py-2 bg-white/20 text-white rounded-full hover:bg-white/30 transition">+ My List</button></div></div></div>);
@@ -298,7 +297,6 @@
   const ProfileTab = ({ userProfile, favorites, progress, badges, isPremium, onUpgrade, onUpdateProfile, onLogout }) => { const [tempName, setTempName] = React.useState(userProfile?.nickname || ""); const [tempAge, setTempAge] = React.useState(userProfile?.age || "4-6"); const [tempAvatar, setTempAvatar] = React.useState(userProfile?.avatar || "🌙"); const avatars = ["🌙", "🦁", "🐘", "🦒", "🐒", "⭐", "🌳", "🦉"]; const saveProfile = () => { onUpdateProfile({ nickname: tempName, age: tempAge, avatar: tempAvatar }); }; return (<div className="max-w-2xl mx-auto"><div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 space-y-4"><div className="flex items-center gap-3"><div className="text-5xl">{tempAvatar}</div><div><h2 className="text-white text-xl md:text-2xl font-bold story-title">{tempName || "Dreamer"}</h2><p className="text-indigo-200 text-sm md:text-base">{isPremium ? "✨ Premium Member" : "Free Member"}</p></div></div>{!isPremium && <button onClick={onUpgrade} className="w-full premium-badge text-indigo-950 font-bold py-2 rounded-full shadow-lg">⭐ Upgrade to Premium (Unlock All Stories)</button>}<div className="border-t border-white/10 pt-4 space-y-3"><div><label className="text-white/80 text-sm md:text-base">Nickname</label><input type="text" value={tempName} onChange={(e) => setTempName(e.target.value)} className="w-full mt-1 bg-white/10 rounded-full px-3 py-2 text-white text-sm md:text-base" /></div><div><label className="text-white/80 text-sm md:text-base">Age</label><select value={tempAge} onChange={(e) => setTempAge(e.target.value)} className="w-full mt-1 bg-white/10 rounded-full px-3 py-2 text-white text-sm md:text-base"><option value="2-4">2–4</option><option value="4-6">4–6</option><option value="6-8">6–8</option><option value="8-10">8–10</option></select></div><div><label className="text-white/80 text-sm md:text-base">Avatar</label><div className="flex flex-wrap gap-2 mt-1">{avatars.map(av => (<button key={av} onClick={() => setTempAvatar(av)} className={`text-2xl p-2 rounded-full ${tempAvatar === av ? 'bg-yellow-400/30 border border-yellow-400' : 'bg-white/10'}`}>{av}</button>))}</div></div><button onClick={saveProfile} className="w-full py-2 bg-yellow-400/20 rounded-full text-yellow-300 text-sm md:text-base">Save Profile</button></div><div className="border-t border-white/10 pt-4"><h3 className="text-white font-semibold text-sm md:text-base mb-2">🏆 Achievements & Streaks</h3><div className="flex justify-between mb-2"><span className="text-white/70 text-xs md:text-sm">Current Streak</span><span className="text-yellow-400 font-bold text-sm md:text-base">{progress.streak} days 🔥</span></div><div className="flex justify-between mb-2"><span className="text-white/70 text-xs md:text-sm">Total Stories Read</span><span className="text-yellow-400 font-bold text-sm md:text-base">{progress.totalStoriesRead}</span></div><div className="flex flex-wrap gap-2 mt-2">{badges.map(badge => (<div key={badge.id} className="bg-white/10 rounded-full px-2 py-1 text-xs flex items-center gap-1"><span>{badge.icon}</span> <span className="text-white/80">{badge.name}</span></div>))}{badges.length === 0 && <span className="text-white/40 text-xs">Complete stories to earn badges ✨</span>}</div></div><button onClick={onLogout} className="w-full py-2 bg-red-500/20 rounded-full text-red-300 text-sm md:text-base mt-2">Sign Out</button></div><div className="mt-4 text-center text-xs text-white/40">⭐ Maji Series · Season 1</div></div>); };
   const BackgroundSoundSelector = ({ activeSound, onSelectSound, volume, onVolumeChange, isPlaying }) => { const handleVolumeChange = (val) => { onVolumeChange(val); }; return (<div className="bg-white/5 rounded-xl p-3 mx-4 md:mx-8 mb-6"><div className="text-yellow-300 text-xs md:text-sm font-semibold mb-2">🎵 Background Sounds</div><div className="flex gap-2 flex-wrap">{Object.keys(SOUNDS).map(sound => (<button key={sound} onClick={() => onSelectSound(sound)} className={`px-3 py-1 rounded-full text-xs md:text-sm capitalize transition ${activeSound === sound ? 'bg-yellow-400 text-indigo-950' : 'bg-white/10 text-white/80'}`}>{sound}</button>))}{activeSound && <button onClick={() => onSelectSound(null)} className="px-3 py-1 rounded-full text-xs bg-red-500/20 text-red-300">Stop</button>}</div><div className="mt-2 flex items-center gap-2"><span className="text-white/60 text-xs">Volume</span><input type="range" min="0" max="1" step="0.05" value={volume} onChange={(e) => handleVolumeChange(parseFloat(e.target.value))} className="flex-1 h-1 bg-white/20 rounded-full" /></div></div>); };
 
-  // Helper to show streak message
   const showStreakMessage = (streak) => {
     const div = document.createElement('div');
     div.innerText = `🔥 ${streak} Day Streak! Keep going!`;
@@ -307,7 +305,7 @@
     setTimeout(() => div.remove(), 2000);
   };
 
-  // ----------------------------- MAIN APP with Bedtime Mode -----------------------------
+  // ----------------------------- MAIN APP -----------------------------
   const App = () => {
     const [user, setUser] = React.useState(null);
     const [userProfile, setUserProfile] = React.useState(null);
@@ -344,14 +342,11 @@
         const elapsed = Date.now() - start;
         const progressVal = Math.min(elapsed / duration, 1);
         setBedtimeProgress(progressVal);
-        // Dim screen
         const dimmer = document.querySelector('.sleep-dimmer');
         if (dimmer) dimmer.style.opacity = 0.3 + progressVal * 0.5;
-        // Fade background sound
         if (audioRef.current) {
           audioRef.current.volume = soundVolume * (1 - progressVal * 0.8);
         }
-        // Slow narration
         voice.setRate(0.85 - progressVal * 0.25);
         if (progressVal >= 1) {
           voice.stop();
@@ -364,7 +359,7 @@
       return () => clearInterval(interval);
     }, [bedtimeMode]);
 
-    // Timer countdown using timestamp
+    // Timer countdown
     React.useEffect(() => {
       if (!sleepEndTime) return;
       const interval = setInterval(() => {
@@ -375,13 +370,11 @@
       return () => clearInterval(interval);
     }, [sleepEndTime]);
 
-    // Calm mode
     React.useEffect(() => {
       if (calmMode) document.body.classList.add('calm-mode');
       else document.body.classList.remove('calm-mode');
     }, [calmMode]);
 
-    // Audio ducking
     React.useEffect(() => {
       if (audioRef.current) audioRef.current.volume = voice.isPlaying ? 0.1 : soundVolume;
     }, [voice.isPlaying, soundVolume]);
@@ -402,7 +395,6 @@
       return () => unsubscribe();
     }, []);
 
-    // Save to localStorage
     React.useEffect(() => { localStorage.setItem('kulala_favorites', JSON.stringify(favorites)); }, [favorites]);
     React.useEffect(() => { localStorage.setItem('kulala_progress', JSON.stringify(progress)); }, [progress]);
     React.useEffect(() => { localStorage.setItem('kulala_badges', JSON.stringify(badges)); }, [badges]);
@@ -418,9 +410,7 @@
       const storyProgress = { ...progress.storyProgress, [story.id]: percentage };
       setProgress(prev => ({ ...prev, storyProgress }));
       if (percentage >= 99) {
-        // Confetti celebration
-        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-        // Habit reinforcement message
+        canvasConfetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
         setTimeout(() => alert("🌙 You're building a beautiful bedtime habit"), 1000);
         const today = new Date().toDateString();
         let newStreak = progress.streak;
@@ -558,7 +548,7 @@
     );
   };
 
-  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  ReactDOM.render(<App />, document.getElementById('root'));
 </script>
 </body>
 </html>
