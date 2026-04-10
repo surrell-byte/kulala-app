@@ -5,3 +5,101 @@
 .star {
   animation: twinkle 3s infinite alternate, float 20s linear infinite;
 }
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  padding: 0.5rem;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.story-modal {
+  background: #12122c;
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .story-modal { max-width: 700px; }
+}
+.sleep-dimmer {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 250;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+.sleep-dimmer.active { opacity: 0.7; }
+.premium-badge {
+  background: linear-gradient(135deg, #f5b042, #e67e22);
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.story-text {
+  font-size: 15px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.82);
+  padding: 0 20px 24px;
+}
+.story-text p.active-sentence {
+  color: #f5b042;
+  text-shadow: 0 0 20px rgba(245,176,66,0.2);
+}
+.streak-toast {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  color: #f5b042;
+  padding: 0.75rem 1.5rem;
+  border-radius: 3rem;
+  font-weight: bold;
+  z-index: 1000;
+  white-space: nowrap;
+  animation: fadeOut 2s forwards;
+  pointer-events: none;
+}
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+}
+.sidebar {
+  transition: transform 0.3s ease;
+}
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 50;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+.pb-nav {
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+}
