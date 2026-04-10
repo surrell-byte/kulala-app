@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 1; } }
+@keyframes float { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+.star {
+  animation: twinkle 3s infinite alternate, float 20s linear infinite;
+}
