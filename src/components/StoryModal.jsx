@@ -60,6 +60,8 @@ const StoryModal = memo(({ story, isOpen, onClose, voiceState, onPlayVoice, user
   return (
     <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="modal-sheet">
+
+        {/* Cover image */}
         <div className="modal-hero">
           <img
             src={coverSrc}
@@ -69,24 +71,31 @@ const StoryModal = memo(({ story, isOpen, onClose, voiceState, onPlayVoice, user
           <div className="modal-hero-overlay" />
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
+
         <div className="modal-body">
+          {/* Meta pills */}
           <div className="modal-meta">
             <span className="meta-pill">{story.category}</span>
             <span className="meta-pill">⏱ {story.readTime}</span>
             <span className="meta-pill">👶 Age {story.age}</span>
             {story.isPremium && <span className="meta-pill gold">✦ Premium</span>}
           </div>
+
           <h2 className="modal-title">{story.title}</h2>
+
+          {/* Controls — responsive grid/flex layout */}
           <div className="modal-controls">
-            <button className="play-pause-btn" onClick={handlePlay}>{playIcon}</button>
-            {voiceState.isPlaying && (
-              <button className="stop-btn" onClick={voiceState.stop} title="Stop">■</button>
-            )}
-            <div style={{ display: 'flex', gap: 6 }}>
+
+            {/* Row 1: play + stop + voice buttons */}
+            <div className="modal-controls-playrow">
+              <button className="play-pause-btn" onClick={handlePlay}>{playIcon}</button>
+              {voiceState.isPlaying && (
+                <button className="stop-btn" onClick={voiceState.stop} title="Stop">■</button>
+              )}
               {[
                 { id: 'female', label: '♀ Female' },
-                { id: 'male',   label: '♂ Male' },
-                { id: 'elder',  label: '🪵 Elder' },
+                { id: 'male',   label: '♂ Male'   },
+                { id: 'elder',  label: '🪵 Elder'  },
               ].map(v => (
                 <button
                   key={v.id}
@@ -97,7 +106,9 @@ const StoryModal = memo(({ story, isOpen, onClose, voiceState, onPlayVoice, user
                 </button>
               ))}
             </div>
-            <div className="speed-row">
+
+            {/* Row 2: speed */}
+            <div className="modal-controls-speed">
               <span className="speed-label">Speed</span>
               {[0.7, 1.0, 1.2].map(s => (
                 <button
@@ -110,6 +121,8 @@ const StoryModal = memo(({ story, isOpen, onClose, voiceState, onPlayVoice, user
               ))}
             </div>
           </div>
+
+          {/* Story body */}
           <div ref={bodyRef} className="story-text">
             {sentences.map((sentence, i) => (
               <span
@@ -127,6 +140,7 @@ const StoryModal = memo(({ story, isOpen, onClose, voiceState, onPlayVoice, user
               </span>
             ))}
           </div>
+
           {story.moral && (
             <div className="story-moral">✦ {story.moral}</div>
           )}
