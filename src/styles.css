@@ -763,3 +763,8 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+/* ─── BackgroundWorld orb animation ─────────────────────────────────── */
+@keyframes floatOrb {
+  from { transform: translateY(0px) scale(1); }
+  to   { transform: translateY(-30px) scale(1.04); }
+}

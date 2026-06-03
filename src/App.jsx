@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { MAJI_EPISODES, BEDTIME_TALES, CALM_TALES, EXISTING_STORIES, ALL_STORIES, CONTINUE_READING } from './data';
 import { useVoiceSynthesis } from './hooks';
 
-import StarField   from './components/StarField';
+import StarField        from './components/StarField';
+import BackgroundWorld from './components/BackgroundWorld';
 import Header      from './components/Header';
 import HeroBanner  from './components/HeroBanner';
 import ContinueRow from './components/ContinueRow';
@@ -159,6 +160,7 @@ const App = () => {
   if (showAuth && !user) {
     return (
       <div style={{ position: 'relative', minHeight: '100vh', background: 'var(--bg-void)' }}>
+        <BackgroundWorld />
         <StarField />
         <AuthScreen onLogin={handleLogin} reason={authReason} />
         <button
@@ -182,6 +184,7 @@ const App = () => {
 
   return (
     <div className={calmMode ? 'calm-mode' : ''} style={{ minHeight: '100vh', background: 'var(--bg-void)' }}>
+      <BackgroundWorld />
       <StarField />
       {toast && <div className="toast" role="status" aria-live="polite">{toast}</div>}
 
