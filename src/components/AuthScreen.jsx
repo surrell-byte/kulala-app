@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const AuthScreen = ({ onLogin, reason }) => {
-  const [mode, setMode]         = useState(reason === 'signup' ? 'signup' : 'login');
+  const [mode, setMode]         = useState(reason === 'signup' || reason === 'premium' ? 'signup' : 'login');
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
@@ -30,10 +30,10 @@ const AuthScreen = ({ onLogin, reason }) => {
           {mode === 'login' ? 'Welcome back' : 'Join Kulala'}
         </h2>
         <p className="auth-subtitle">
-          {mode === 'login'
-            ? 'Step into the world of African bedtime magic.'
-            : reason === 'premium'
+          {reason === 'premium'
             ? 'Create a free account to unlock premium stories.'
+            : mode === 'login'
+            ? 'Step into the world of African bedtime magic.'
             : "Your child's story journey begins here."}
         </p>
         {mode === 'signup' && (

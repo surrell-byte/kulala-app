@@ -21,8 +21,25 @@ const StoryModal = memo(({
   const bodyRef    = useRef(null);
   const timerRef   = useRef(null);
 
+  const sentences = useMemo(() => {
+    if (!story?.body) return [];
+    return story.body
+      .split(/([.!?…])\s+/)
+      .reduce((acc, part, i, arr) => {
+        if (i % 2 === 0) {
+          const punct = arr[i + 1] || '';
+          const s = (part + punct).trim();
+          if (s.length > 0) acc.push(s);
+        }
+        return acc;
+      }, []);
+  }, [story?.body]);
+
   useEffect(() => {
     if (story) setCoverSrc(story.cover);
+    setSleepTimer(null);
+    setTimerLeft(null);
+    clearInterval(timerRef.current);
   }, [story]);
 
   // Restore reading position when story opens
@@ -36,7 +53,7 @@ const StoryModal = memo(({
         }, 350);
       }
     }
-  }, [isOpen, story?.id]);
+  }, [getProgress, isOpen, story]);
 
   // Save progress whenever the narrated sentence advances
   useEffect(() => {
@@ -45,7 +62,7 @@ const StoryModal = memo(({
     if (total === 0) return;
     const percent = Math.round(((voiceState.currentIdx + 1) / total) * 100);
     onSaveProgress(story.id, percent, voiceState.currentIdx);
-  }, [voiceState.currentIdx, story?.id]);
+  }, [onSaveProgress, sentences.length, story, voiceState.currentIdx]);
 
   // Sleep timer countdown
   useEffect(() => {
@@ -80,20 +97,6 @@ const StoryModal = memo(({
     const s = secs % 60;
     return `${m}:${String(s).padStart(2, '0')}`;
   };
-
-  const sentences = useMemo(() => {
-    if (!story?.body) return [];
-    return story.body
-      .split(/([.!?…])\s+/)
-      .reduce((acc, part, i, arr) => {
-        if (i % 2 === 0) {
-          const punct = arr[i + 1] || '';
-          const s = (part + punct).trim();
-          if (s.length > 0) acc.push(s);
-        }
-        return acc;
-      }, []);
-  }, [story?.body]);
 
   useEffect(() => {
     if (voiceState.currentIdx >= 0 && bodyRef.current) {
@@ -166,7 +169,7 @@ const StoryModal = memo(({
               className="story-action-btn"
               aria-label="Share story"
               onClick={() => {
-                if (navigator.share) {
+                if (typeof navigator !== 'undefined' && navigator.share) {
                   navigator.share({ title: story.title, text: `Listen to "${story.title}" on Kulala` })
                     .catch(() => {});
                 }

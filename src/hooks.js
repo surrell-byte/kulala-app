@@ -6,9 +6,12 @@ export function useVoiceSynthesis() {
   const [currentIdx, setCurrentIdx] = useState(-1);
   const rateRef = useRef(0.88);
   const isPausedRef = useRef(false);
-  const synth = window.speechSynthesis;
+  const synthRef = useRef(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
+    const synth = window.speechSynthesis;
+    synthRef.current = synth;
     const loadVoices = () => { synth.getVoices(); };
     loadVoices();
     if (synth.onvoiceschanged !== undefined) {
@@ -29,6 +32,8 @@ export function useVoiceSynthesis() {
   };
 
   const speakSentences = useCallback((sentences, options = {}) => {
+    const synth = synthRef.current;
+    if (!synth) return;
     if (!sentences?.length) return;
     synth.cancel();
     isPausedRef.current = false;
@@ -81,6 +86,8 @@ export function useVoiceSynthesis() {
   }, []);
 
   const pause = useCallback(() => {
+    const synth = synthRef.current;
+    if (!synth) return;
     if (synth.speaking && !synth.paused) {
       synth.pause();
       isPausedRef.current = true;
@@ -89,6 +96,8 @@ export function useVoiceSynthesis() {
   }, []);
 
   const resume = useCallback(() => {
+    const synth = synthRef.current;
+    if (!synth) return;
     if (synth.paused) {
       synth.resume();
       isPausedRef.current = false;
@@ -97,6 +106,8 @@ export function useVoiceSynthesis() {
   }, []);
 
   const stop = useCallback(() => {
+    const synth = synthRef.current;
+    if (!synth) return;
     synth.cancel();
     isPausedRef.current = false;
     setIsPlaying(false);

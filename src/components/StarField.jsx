@@ -2,23 +2,20 @@ import { useMemo } from 'react';
 
 const StarField = () => {
   const stars = useMemo(() =>
-    [...Array(80)].map((_, i) => ({
+    [...Array(44)].map((_, i) => ({
       id:      i,
-      size:    Math.random() * 2.2 + 0.4,
+      size:    Math.random() * 2.4 + 1,
       left:    Math.random() * 100,
-      top:     Math.random() * 200,
-      twDur:   (Math.random() * 4 + 2).toFixed(1),
-      flDur:   (Math.random() * 30 + 18).toFixed(0),
-      delay:   (Math.random() * 10).toFixed(1),
-      opacity: Math.random() * 0.6 + 0.2,
+      top:     Math.random() * 82,
+      twDur:   (Math.random() * 4 + 5).toFixed(1),
+      flDur:   (Math.random() * 60 + 60).toFixed(0),
+      delay:   (Math.random() * 12).toFixed(1),
+      opacity: Math.random() * 0.35 + 0.25,
     })), []
   );
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0,
-      pointerEvents: 'none', overflow: 'hidden', zIndex: 0
-    }}>
+    <div className="star-field">
       {stars.map(s => (
         <div
           key={s.id}

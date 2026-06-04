@@ -32,11 +32,11 @@
 
 /* ─── Design tokens ──────────────────────────────────────────────────── */
 :root {
-  --bg-void:      #08070f;
-  --bg-deep:      #0d0b1a;
-  --bg-card:      #131122;
-  --bg-surface:   #1a1830;
-  --bg-elevated:  #201e35;
+  --bg-void:      #0b1530;
+  --bg-deep:      #0d1a30;
+  --bg-card:      rgba(14,25,48,0.82);
+  --bg-surface:   rgba(32,48,78,0.78);
+  --bg-elevated:  rgba(38,55,88,0.86);
   --gold:         #e8a83e;
   --gold-dim:     rgba(232,168,62,0.18);
   --gold-glow:    rgba(232,168,62,0.08);
@@ -78,6 +78,19 @@ body {
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 .fade-in-up { animation: fadeInUp 0.55s cubic-bezier(0.22,1,0.36,1) both; }
 
+/* ─── Dream World ───────────────────────────────────────────────────── */
+.cloud-world {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(5,9,25,0.18) 0%, rgba(5,9,25,0.28) 54%, rgba(5,9,25,0.62) 100%),
+    url('/assets/images/backgrounds/kulala-night-sky.webp') center center / cover no-repeat,
+    linear-gradient(180deg, #08132a 0%, #17335a 48%, #132f36 100%);
+}
+
 /* ─── Accessibility — focus-visible ─────────────────────────────────── */
 button:focus-visible,
 input:focus-visible,
@@ -86,16 +99,6 @@ textarea:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
-}
-
-/* ─── Stars ──────────────────────────────────────────────────────────── */
-.star {
-  position: absolute;
-  border-radius: 50%;
-  background: #fff;
-  animation:
-    twinkle var(--tw-dur, 3s) ease-in-out infinite alternate,
-    float   var(--fl-dur, 25s) ease-in-out infinite;
 }
 
 /* ─── Toast ──────────────────────────────────────────────────────────── */
@@ -403,7 +406,7 @@ a:focus-visible {
 .story-card-icon { position: absolute; bottom: 32px; left: 9px; font-size: 1.2rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 .story-card-bottom { position: absolute; bottom: 8px; left: 9px; right: 9px; }
 .story-card-cat { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-family: var(--font-body); }
-.story-card-title { font-family: var(--font-body); font-size: 0.77rem; font-weight: 600; color: var(--ivory); margin-top: 7px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.story-card-title { font-family: var(--font-body); font-size: 0.77rem; font-weight: 600; color: var(--ivory); margin-top: 7px; line-height: 1.35; display: -webkit-box; line-clamp: 2; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .story-card-meta { font-size: 0.62rem; color: var(--ivory-muted); margin-top: 2px; font-weight: 500; }
 .pulse-dot { animation: pulse 1.8s ease-in-out infinite; }
 
@@ -435,7 +438,7 @@ a:focus-visible {
   padding: 13px 14px; font-size: 1rem; /* prevent iOS zoom */
   font-family: var(--font-body); margin-bottom: 12px;
   display: block; transition: var(--transition);
-  outline: none; -webkit-appearance: none;
+  outline: none; appearance: none; -webkit-appearance: none;
 }
 .auth-input:focus { border-color: var(--gold-dim); box-shadow: 0 0 0 3px var(--gold-glow); }
 .auth-input::placeholder { color: var(--ivory-muted); }
@@ -444,7 +447,7 @@ a:focus-visible {
   border: none; border-radius: var(--radius-sm); padding: 14px;
   font-size: 1rem; font-weight: 700; cursor: pointer;
   font-family: var(--font-body); transition: var(--transition);
-  margin-top: 4px; letter-spacing: 0.02em; -webkit-appearance: none;
+  margin-top: 4px; letter-spacing: 0.02em; appearance: none; -webkit-appearance: none;
   min-height: 48px;
 }
 .auth-submit:hover { background: #f0bc55; box-shadow: 0 6px 24px rgba(232,168,62,0.45); }
@@ -762,9 +765,4 @@ a:focus-visible {
 /* ─── Reduced motion ─────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-/* ─── BackgroundWorld orb animation ─────────────────────────────────── */
-@keyframes floatOrb {
-  from { transform: translateY(0px) scale(1); }
-  to   { transform: translateY(-30px) scale(1.04); }
 }
