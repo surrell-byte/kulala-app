@@ -51,7 +51,7 @@ export const EXISTING_STORIES = [
   {
     id: 1,
     title: "The Lion and the Clever Hare",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/the-lion-and-the-clever-hare.webp",
     age: "6–9",
     readTime: "10 min",
     category: "Adventure",
@@ -62,7 +62,7 @@ export const EXISTING_STORIES = [
   {
     id: 2,
     title: "Whispers of the Forest",
-    cover: "/assets/images/covers/fox-listened-to-silence.png",
+    cover: "/assets/images/covers/whispers-of-the-forest.webp",
     age: "4–7",
     readTime: "8 min",
     category: "Calm",
@@ -73,7 +73,7 @@ export const EXISTING_STORIES = [
   {
     id: 3,
     title: "Zara and the Moon's Gift",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/zara-and-the-moons-gift.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Sleep",
@@ -183,7 +183,7 @@ export const EXISTING_STORIES = [
   {
     id: 13,
     title: "Ravi the Dream Robot",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/ravi-the-dream-robot.webp",
     age: "6–9",
     readTime: "8 min",
     category: "Adventure",
@@ -194,7 +194,7 @@ export const EXISTING_STORIES = [
   {
     id: 14,
     title: "Mina's Vanishing Bell",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/minas-vanishing-bell.webp",
     age: "5–8",
     readTime: "8 min",
     category: "Adventure",
@@ -205,7 +205,7 @@ export const EXISTING_STORIES = [
   {
     id: 15,
     title: "Toby's Backwards Tree",
-    cover: "/assets/images/covers/fox-listened-to-silence.png",
+    cover: "/assets/images/covers/tobys-backwards-tree.webp",
     age: "6–9",
     readTime: "7 min",
     category: "Adventure",
@@ -216,7 +216,7 @@ export const EXISTING_STORIES = [
   {
     id: 16,
     title: "Potty the Couch Potato",
-    cover: "/assets/images/covers/fox-listened-to-silence.png",
+    cover: "/assets/images/covers/potty-the-couch-potato.webp",
     age: "3–6",
     readTime: "4 min",
     category: "Calm",
@@ -227,7 +227,7 @@ export const EXISTING_STORIES = [
   {
     id: 17,
     title: "Niko's Noisy Sneakers",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/nikos-noisy-sneakers.webp",
     age: "5–8",
     readTime: "5 min",
     category: "Adventure",
@@ -239,7 +239,7 @@ export const EXISTING_STORIES = [
   {
     id: 18,
     title: "The Moon's Missing Corner",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/the-moons-missing.webp",
     age: "4–7",
     readTime: "6 min",
     category: "Sleep",
@@ -251,7 +251,7 @@ export const EXISTING_STORIES = [
   {
     id: 19,
     title: "Bara and the Bubble Storm",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/bara-and-the-bubble-storm.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -263,7 +263,7 @@ export const EXISTING_STORIES = [
   {
     id: 20,
     title: "Kiki's Invisible Kite",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/kikis-invisible-kite.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -287,7 +287,7 @@ export const EXISTING_STORIES = [
   {
     id: 22,
     title: "The Day the Fridge Sneezed",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/the-day-the-fridge-sneezed.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -299,7 +299,7 @@ export const EXISTING_STORIES = [
   {
     id: 23,
     title: "Tomo's Backwards Bicycle",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/tomos-backwards-bicycle.webp",
     age: "6–9",
     readTime: "6 min",
     category: "Adventure",
@@ -323,7 +323,7 @@ export const EXISTING_STORIES = [
   {
     id: 25,
     title: "Lulu's Upside Down Umbrella",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/lulus-upside-down-umbrella.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -335,7 +335,7 @@ export const EXISTING_STORIES = [
   {
     id: 26,
     title: "The Cookie That Followed Benji",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/the-cookie-that-followed-benji.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -351,7 +351,7 @@ export const BEDTIME_TALES = [
   {
     id: 2001,
     title: "Ari and the Alarm Clock Adventure",
-    cover: "/assets/images/covers/benny-bear-big-yawn.png",
+    cover: "/assets/images/covers/ari-and-the-alarm-clock-adventure.webp",
     age: "5–8",
     readTime: "9 min",
     category: "Adventure",
@@ -362,7 +362,7 @@ export const BEDTIME_TALES = [
   {
     id: 2002,
     title: "Zeki's Hidden Crossing",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/zekis-hidden-crossing.webp",
     age: "6–9",
     readTime: "8 min",
     category: "Adventure",
@@ -373,7 +373,7 @@ export const BEDTIME_TALES = [
   {
     id: 2003,
     title: "Pippa's Self-Painting Brush",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/pippas-self-painting-brush.webp",
     age: "5–8",
     readTime: "9 min",
     category: "Adventure",
@@ -387,7 +387,7 @@ export const CALM_TALES = [
   {
     id: 3001,
     title: "The Fox Who Listened to Silence",
-    cover: "/assets/images/covers/fox-listened-to-silence.png",
+    cover: "/assets/images/covers/the-fox-who-listened-to-silence.webp",
     age: "3–7",
     readTime: "5 min",
     category: "Sleep",
@@ -398,7 +398,7 @@ export const CALM_TALES = [
   {
     id: 3002,
     title: "The Kitten and the Coziest Spot",
-    cover: "/assets/images/covers/kitten-coziest-spot.png",
+    cover: "/assets/images/covers/the-kitten-and-the-coziest-spot.webp",
     age: "2–5",
     readTime: "5 min",
     category: "Sleep",
@@ -409,13 +409,95 @@ export const CALM_TALES = [
   {
     id: 3003,
     title: "The Little Rocket Who Slowed Down",
-    cover: "/assets/images/covers/little-rocket-slowed-down.png",
+    cover: "/assets/images/covers/the-little-rocket-who-slowed-down.webp",
     age: "3–6",
     readTime: "6 min",
     category: "Sleep",
     icon: "🚀",
     body: `Far beyond the clouds, where the sky faded into deep, sparkling space, lived a small rocket named Riko.\n\nRiko was shiny and bright, with a silver body and a glowing blue flame. And Riko had one favorite thing: Going fast.\n\n"3… 2… 1… ZOOOOM!"\n\nOff Riko would go — past planets, around stars, and through swirling space dust.\n\nBut there was one small problem. Riko was always in such a hurry… that Riko never really saw anything.\n\nOne day, as Riko zipped past a glowing cluster of stars, a gentle voice called out: "Where are you going in such a rush?"\n\nIt was Nova, an old, glowing star with a warm, steady light.\n\n"I'm exploring!" Riko said. "There's so much to see!"\n\n"Tell me," she said, "what did you notice?"\n\nRiko paused. "Well… I saw… um…"\n\nRiko couldn't answer. Because Riko had never stayed long enough to really look.\n\n"Sometimes," Nova said, "to see more… you must go slower."\n\nSo, for the first time ever, Riko decided to try.\n\nRiko slowed down. Instead of ZOOOOM, it was now… whoooosh…\n\nRiko noticed tiny stars twinkling in different colors — blue, gold, even soft pink. A ringed planet spun slowly, its rings glowing like a shimmering halo. A trail of sparkling dust drifted past like glitter in the dark.\n\n"This is fun," Riko said.\n\nFor the first time, space didn't feel like something to race through. It felt like something to experience. To enjoy. To wonder about.\n\nRiko drifted near a quiet moon and rested. No rushing. No racing. Just floating. Just being.\n\nAnd in that stillness, Riko felt something new. Peace.\n\nFrom that day on, Riko still loved to zoom across the stars… But not all the time. Sometimes, Riko would slow down. To watch. To listen. To feel.\n\nAs the stars twinkled gently and the universe hummed its quiet lullaby, Riko dimmed its bright flame and drifted into a soft, peaceful rest.`,
     moral: "Slow down — you might discover something beautiful you'd otherwise rush past."
+  },
+  {
+    id: 3004,
+    title: "Flick and the Little Star",
+    cover: "/assets/images/covers/flick-and-the-little-star.webp",
+    audio: "/assets/sounds/stories/Flick_and_the_Little_Star.wav",
+    age: "3–7",
+    readTime: "4 min",
+    category: "Sleep",
+    icon: "✨",
+    body: `Once upon a time, in a moonlit meadow, there lived a tiny firefly named Flick.\n\nEvery night, Flick lit up the grass with his golden glow. But one evening, he noticed a little star twinkling sadly in the sky.\n\n"Why are you sad?" called Flick.\n\n"I'm the smallest star," sighed the star. "No one notices me."\n\nFlick thought for a moment. Then he flew as high as he could, blinking his light in a cheerful pattern.\n\nThe little star smiled and blinked back.\n\nSoon, all the other stars noticed the game and joined in. The night sky sparkled with dancing lights, and the meadow below shimmered like magic.\n\n"You helped everyone shine brighter," said the little star.\n\n"And you helped me reach the sky," replied Flick.\n\nFrom that night on, the star never felt too small, and Flick never felt too far from the heavens.\n\nAs the moon watched over them, the meadow grew quiet, the stars twinkled softly, and the world drifted peacefully to sleep.\n\nThe end.`,
+    moral: "Even the smallest light can help the whole sky shine."
+  },
+  {
+    id: 3005,
+    title: "The Moon's Missing Button",
+    cover: "/assets/images/covers/the-moons-missing-button.webp",
+    audio: "/assets/sounds/stories/The_Moon's_Missing_Button.wav",
+    age: "3–7",
+    readTime: "4 min",
+    category: "Sleep",
+    icon: "🌙",
+    body: `One night, the Moon looked down at Earth and gasped.\n\n"Oh no! My silver button is missing!"\n\nWithout it, his favorite mooncoat wouldn't stay closed, and chilly starlight kept sneaking in.\n\nA curious rabbit named Pip heard the news and volunteered to help.\n\nHe searched the forest, the hills, and even the tops of the tallest trees.\n\nJust as he was about to give up, he spotted something shiny at the bottom of a pond.\n\nIt was the button!\n\nPip carefully rolled it home, and the Moon sewed it back onto his coat.\n\n"How can I thank you?" asked the Moon.\n\nPip thought for a moment.\n\n"Could you make the night a little brighter for everyone?"\n\nThe Moon smiled and shone so brightly that every sleeping animal had the sweetest dreams.\n\nAnd every time you see a bright full moon, remember—it might just be showing off its favorite button.\n\nThe End.`,
+    moral: "A helpful heart can make the whole night brighter."
+  },
+  {
+    id: 3006,
+    title: "The Boy Who Borrowed a Dream",
+    cover: "/assets/images/covers/the-boy-who-borrowed-a-dream.webp",
+    audio: "/assets/sounds/stories/The_Boy_Who_Borrowed_a_Dream.wav",
+    age: "4–8",
+    readTime: "5 min",
+    category: "Sleep",
+    icon: "🚂",
+    body: `One night, a boy named Leo climbed into bed and waited for a dream.\n\nAnd waited.\n\nAnd waited.\n\nBut no dream came.\n\nWhat Leo didn't know was that high above the clouds, the Dream Train had accidentally skipped his house.\n\nWhen the conductor checked his list, he gasped.\n\n"One dream left undelivered!"\n\nQuickly, he placed the dream inside a silver envelope and tossed it from the train.\n\nThe envelope floated through the stars, drifted past the moon, and landed softly on Leo's pillow.\n\nInside was a note:\n\n"For one night only. Enjoy."\n\nThe moment Leo opened it, his room disappeared.\n\nSuddenly, he was riding a giant turtle across an ocean of clouds.\n\nHe leaped between glowing stars, raced moon dolphins through the sky, and danced on rainbows that sang songs.\n\nIt was the greatest adventure of his life.\n\nWhen morning came, Leo woke up smiling.\n\nThe envelope was gone.\n\nBut on his pillow sat a tiny silver star.\n\nAnd some people believe that when a dream feels extra magical...\n\nit's because it was delivered by the Dream Train itself.\n\nThe End.`,
+    moral: "Some dreams arrive when we least expect them."
+  },
+  {
+    id: 3007,
+    title: "The Secret Library of Dreams",
+    cover: "/assets/images/covers/the-secret-library-of-dreams.webp",
+    audio: "/assets/sounds/stories/The_Secret_Library_of_Dreams.wav",
+    age: "5–8",
+    readTime: "5 min",
+    category: "Sleep",
+    icon: "📚",
+    body: `Every night, after the world fell asleep, a secret library appeared above the clouds.\n\nIts shelves stretched forever, filled with glowing books.\n\nBut these weren't ordinary books.\n\nEach one contained a dream that had never been dreamed.\n\nOne evening, a curious girl named Maya woke up for just a second and spotted a floating golden key on her pillow.\n\nThe key led her to the library.\n\nInside, a tiny owl librarian greeted her.\n\n"You may open one book," he said.\n\nMaya chose the smallest one.\n\nThe moment she opened it, she was whisked away into a magical world where whales swam through the stars and trees grew crystal fruit that chimed like bells.\n\nShe laughed, explored, and danced beneath rainbow moons.\n\nToo soon, the adventure ended.\n\nAs dawn approached, the owl gently closed the book.\n\n"Will I ever come back?" Maya asked.\n\nThe owl smiled.\n\n"Every wonderful dream begins somewhere."\n\nThe next morning, Maya woke up in her bed.\n\nThe key was gone.\n\nBut beneath her pillow was a single golden feather.\n\nAnd some say that whenever you have a dream unlike any you've ever had before...\n\nit's because a new book was opened in the Secret Library of Dreams.\n\nThe End.`,
+    moral: "Every wonderful dream begins somewhere."
+  },
+  {
+    id: 3008,
+    title: "The Star That Fell Asleep",
+    cover: "/assets/images/covers/the-star-that-fell-asleep.webp",
+    audio: "/assets/sounds/stories/The_Star_That_Fell_Asleep.wav",
+    age: "3–7",
+    readTime: "5 min",
+    category: "Sleep",
+    icon: "⭐",
+    body: `One night, something strange happened.\n\nA star fell asleep.\n\nNot fell from the sky.\n\nFell asleep.\n\nWhile all the other stars twinkled brightly, one little star named Nova began to yawn.\n\n"I'm so tired," she whispered.\n\nBefore anyone could stop her, she drifted off to sleep.\n\nSlowly, Nova's light faded.\n\nDown on Earth, a young boy noticed a dark spot in the sky.\n\n"Where did that star go?" he wondered.\n\nThe Moon searched the heavens and finally found Nova curled up on a fluffy cloud.\n\n"Wake up," said the Moon gently.\n\nBut Nova was sleeping too deeply.\n\nSo the Moon gathered the softest sounds in the world—a kitten's purr, rustling leaves, ocean waves, and a mother's lullaby.\n\nHe carried them to Nova's cloud.\n\nThe sounds swirled around her like a dream.\n\nNova smiled, stretched, and opened her eyes.\n\nInstantly, her light returned, brighter than ever.\n\nThe dark spot vanished.\n\nAnd from that night on, whenever a star seems to flicker for a moment, people wonder...\n\nIs it shining?\n\nOr is it trying not to fall asleep?\n\nThe End.`,
+    moral: "Rest can help even the brightest lights shine again."
+  },
+  {
+    id: 3009,
+    title: "The Little Whale Who Swam Through the Sky",
+    cover: "/assets/images/covers/the-little-whale-who-swam-through-the-sky.webp",
+    age: "4–8",
+    readTime: "5 min",
+    category: "Sleep",
+    icon: "🐋",
+    body: `One night, a young whale named Wilo looked up from the ocean and wondered what it would be like to touch the stars.\n\nEvery whale knew that was impossible.\n\nStars belonged to the sky.\n\nWhales belonged to the sea.\n\nBut that night, a silver moonbeam stretched down and tapped Wilo on the nose.\n\n"Follow me," it whispered.\n\nSuddenly, the water beneath Wilo began to glow.\n\nWith one mighty leap, he burst from the ocean...\n\nand kept going.\n\nHigher.\n\nHigher.\n\nHigher.\n\nUntil he was swimming through the clouds.\n\nAbove him floated constellations like glittering fish.\n\nBelow him drifted islands made of moonlight.\n\nWilo splashed through rivers of stardust and played tag with comets racing across the night.\n\nIt was the greatest adventure of his life.\n\nBut as dawn approached, the moonbeam returned.\n\n"It is time to go home."\n\nWilo dove back toward Earth, slipping gently into the ocean just as the sun began to rise.\n\nFrom that day on, whenever whales leap from the sea, some people believe they aren't jumping at all.\n\nThey're trying to remember the night they swam among the stars.\n\nThe End.`,
+    moral: "Wonder can carry us higher than we ever imagined."
+  },
+  {
+    id: 3010,
+    title: "The Owl Who Lost the Night",
+    cover: "/assets/images/covers/the-owl-who-lost-the-night.webp",
+    age: "4–8",
+    readTime: "5 min",
+    category: "Sleep",
+    icon: "🦉",
+    body: `One evening, Oliver the owl woke up for work and immediately knew something was wrong.\n\nThe night was gone.\n\nNo stars.\n\nNo moon.\n\nNo darkness.\n\nJust a strange gray sky.\n\n"Where did the night go?" he gasped.\n\nAs the forest's official Night Keeper, Oliver grabbed his lantern and set off to investigate.\n\nAfter hours of searching, he discovered a tiny hole in the sky.\n\nBeside it sat a sleepy squirrel.\n\n"I'm sorry," said the squirrel. "I was polishing an acorn and accidentally poked a hole in the night."\n\nOliver peered through the hole.\n\nOn the other side, the entire night sky had slipped into a giant velvet bag and become tangled.\n\nSo he carefully pulled out the moon.\n\nThen the stars.\n\nThen the darkness itself.\n\nOne by one, everything returned to its proper place.\n\nThe sky sparkled once more.\n\nThe moon glowed brighter than ever.\n\n"Thank you," said the stars.\n\nOliver smiled.\n\n"It's all in a night's work."\n\nAnd that, some say, is why owls stay awake after sunset.\n\nThey're making sure nobody loses the night again.\n\nThe End.`,
+    moral: "Careful helpers can bring light, stars, and calm back into place."
   }
 ];
 

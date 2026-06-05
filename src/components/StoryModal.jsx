@@ -116,9 +116,9 @@ const StoryModal = memo(({
     } else if (voiceState.isPaused) {
       voiceState.resume();
     } else {
-      onPlayVoice(sentences, { voiceType, accent });
+      onPlayVoice(sentences, { voiceType, accent, audio: story.audio });
     }
-  }, [voiceState, sentences, voiceType, accent, onPlayVoice]);
+  }, [voiceState, sentences, voiceType, accent, onPlayVoice, story?.audio]);
 
   const handleSpeed = (s) => {
     setSpeed(s);
@@ -206,7 +206,7 @@ const StoryModal = memo(({
               {voiceState.isPlaying && (
                 <button type="button" className="stop-btn" onClick={voiceState.stop} aria-label="Stop narration">■</button>
               )}
-              {[
+              {!story.audio && [
                 { id: 'female', label: '♀ Female' },
                 { id: 'male',   label: '♂ Male'   },
                 { id: 'elder',  label: '🪵 Elder'  },

@@ -7,6 +7,7 @@ export function useVoiceSynthesis() {
   const rateRef = useRef(0.88);
   const isPausedRef = useRef(false);
   const synthRef = useRef(null);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return undefined;
@@ -19,8 +20,19 @@ export function useVoiceSynthesis() {
     }
     return () => {
       synth.cancel();
+      audioRef.current?.pause();
       isPausedRef.current = false;
     };
+  }, []);
+
+  const clearAudio = useCallback(() => {
+    if (!audioRef.current) return;
+    audioRef.current.pause();
+    audioRef.current.onended = null;
+    audioRef.current.onerror = null;
+    audioRef.current.onloadedmetadata = null;
+    audioRef.current.ontimeupdate = null;
+    audioRef.current = null;
   }, []);
 
   const applyAccent = (text, type) => {
@@ -35,6 +47,7 @@ export function useVoiceSynthesis() {
     const synth = synthRef.current;
     if (!synth) return;
     if (!sentences?.length) return;
+    clearAudio();
     synth.cancel();
     isPausedRef.current = false;
 
@@ -83,10 +96,57 @@ export function useVoiceSynthesis() {
     setIsPlaying(true);
     setIsPaused(false);
     next();
-  }, []);
+  }, [clearAudio]);
+
+  const playAudio = useCallback((src, sentences = []) => {
+    if (!src) return;
+    synthRef.current?.cancel();
+    clearAudio();
+    isPausedRef.current = false;
+
+    const audio = new Audio(src);
+    const sentenceCount = sentences.length;
+    audio.playbackRate = rateRef.current;
+    audioRef.current = audio;
+    setCurrentIdx(sentenceCount > 0 ? 0 : -1);
+    setIsPlaying(true);
+    setIsPaused(false);
+
+    const updateCurrentIdx = () => {
+      if (!sentenceCount || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+      const ratio = Math.min(0.999, Math.max(0, audio.currentTime / audio.duration));
+      setCurrentIdx(Math.min(sentenceCount - 1, Math.floor(ratio * sentenceCount)));
+    };
+
+    audio.onloadedmetadata = updateCurrentIdx;
+    audio.ontimeupdate = updateCurrentIdx;
+    audio.onended = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+      setCurrentIdx(sentenceCount > 0 ? sentenceCount - 1 : -1);
+      window.setTimeout(() => setCurrentIdx(-1), 0);
+      audioRef.current = null;
+    };
+    audio.onerror = () => {
+      setIsPlaying(false);
+      setIsPaused(false);
+      setCurrentIdx(-1);
+      audioRef.current = null;
+    };
+    audio.play().catch(() => {
+      setIsPlaying(false);
+      setIsPaused(false);
+      audioRef.current = null;
+    });
+  }, [clearAudio]);
 
   const pause = useCallback(() => {
     const synth = synthRef.current;
+    if (audioRef.current && !audioRef.current.paused) {
+      audioRef.current.pause();
+      setIsPaused(true);
+      return;
+    }
     if (!synth) return;
     if (synth.speaking && !synth.paused) {
       synth.pause();
@@ -97,6 +157,10 @@ export function useVoiceSynthesis() {
 
   const resume = useCallback(() => {
     const synth = synthRef.current;
+    if (audioRef.current && audioRef.current.paused) {
+      audioRef.current.play().then(() => setIsPaused(false)).catch(() => {});
+      return;
+    }
     if (!synth) return;
     if (synth.paused) {
       synth.resume();
@@ -107,8 +171,8 @@ export function useVoiceSynthesis() {
 
   const stop = useCallback(() => {
     const synth = synthRef.current;
-    if (!synth) return;
-    synth.cancel();
+    clearAudio();
+    synth?.cancel();
     isPausedRef.current = false;
     setIsPlaying(false);
     setIsPaused(false);
@@ -117,9 +181,10 @@ export function useVoiceSynthesis() {
 
   const setRate = useCallback((r) => {
     rateRef.current = Math.max(0.5, Math.min(1.3, r));
+    if (audioRef.current) audioRef.current.playbackRate = rateRef.current;
   }, []);
 
-  return { isPlaying, isPaused, currentIdx, speakSentences, pause, resume, stop, setRate };
+  return { isPlaying, isPaused, currentIdx, speakSentences, playAudio, pause, resume, stop, setRate };
 }
 
 export function useLocalStorage(key, defaultValue) {

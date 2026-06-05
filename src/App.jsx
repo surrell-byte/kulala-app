@@ -127,11 +127,15 @@ const App = () => {
     .slice(0, 6);
 
   const handlePlayVoice = useCallback((sentences, options) => {
+    if (options.audio) {
+      voice.playAudio(options.audio, sentences);
+      return;
+    }
     voice.speakSentences(sentences, {
       voiceType: options.voiceType,
       accent:    options.accent
     });
-  }, [voice.speakSentences]);
+  }, [voice.playAudio, voice.speakSentences]);
 
   const handleStoryOpen = useCallback((story) => {
     if (story.isPremium && !user) {
