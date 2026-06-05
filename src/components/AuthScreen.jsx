@@ -14,9 +14,18 @@ const AuthScreen = ({ onLogin, reason }) => {
     setError('');
     try {
       if (backendStatus.isConfigured) {
-        const user = mode === 'signup'
-          ? await signUp({ email, password, nickname })
-          : await signIn({ email, password });
+        if (mode === 'signup') {
+          const { user, needsEmailConfirmation } = await signUp({ email, password, nickname });
+          if (needsEmailConfirmation) {
+            setError('Check your email to confirm your account, then sign in.');
+            setMode('login');
+            return;
+          }
+          const profile = await getProfile(user);
+          onLogin(user, profile);
+          return;
+        }
+        const user = await signIn({ email, password });
         const profile = await getProfile(user);
         onLogin(user, profile);
         return;

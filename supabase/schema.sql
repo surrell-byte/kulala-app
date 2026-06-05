@@ -6,10 +6,18 @@ create table if not exists public.profiles (
   nickname text not null default 'Dreamer',
   avatar text not null default '🌙',
   age text not null default '6-8',
+  bedtime_mood text not null default 'calm',
+  preferred_voice text not null default 'female',
+  default_sleep_timer integer,
   has_premium boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.profiles
+  add column if not exists bedtime_mood text not null default 'calm',
+  add column if not exists preferred_voice text not null default 'female',
+  add column if not exists default_sleep_timer integer;
 
 create table if not exists public.stories (
   story_id integer primary key,
@@ -189,13 +197,25 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, nickname, avatar, age)
+  insert into public.profiles (
+    id,
+    email,
+    nickname,
+    avatar,
+    age,
+    bedtime_mood,
+    preferred_voice,
+    default_sleep_timer
+  )
   values (
     new.id,
     new.email,
     coalesce(new.raw_user_meta_data->>'nickname', split_part(new.email, '@', 1)),
     coalesce(new.raw_user_meta_data->>'avatar', '🌙'),
-    coalesce(new.raw_user_meta_data->>'age', '6-8')
+    coalesce(new.raw_user_meta_data->>'age', '6-8'),
+    coalesce(new.raw_user_meta_data->>'bedtime_mood', 'calm'),
+    coalesce(new.raw_user_meta_data->>'preferred_voice', 'female'),
+    nullif(new.raw_user_meta_data->>'default_sleep_timer', '')::integer
   )
   on conflict (id) do nothing;
   return new;

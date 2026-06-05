@@ -331,9 +331,49 @@ const App = () => {
     setSelectedStory(story);
   }, [handleStoryOpen]);
 
+  const handleShareStory = useCallback(async (story) => {
+    if (!story || typeof window === 'undefined') return null;
+    const url = new URL(window.location.href);
+    url.searchParams.set('story', story.id);
+    url.searchParams.delete('checkout');
+
+    const shareData = {
+      title: story.title,
+      text: `Listen to "${story.title}" on Kulala.`,
+      url: url.toString(),
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return 'shared';
+      } catch (err) {
+        if (err?.name === 'AbortError') return null;
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        return 'copied';
+      } catch {}
+    }
+
+    window.prompt('Copy this story link:', shareData.url);
+    return 'copied';
+  }, []);
+
   const handleFeaturedStoryOpen = useCallback(() => {
     if (storyGroups.maji[0]) handleStoryOpen(storyGroups.maji[0]);
   }, [handleStoryOpen, storyGroups.maji]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const storyId = Number(params.get('story'));
+    if (!storyId || selectedStory) return;
+    const story = allStories.find(item => Number(item.id) === storyId);
+    if (story) handleStoryOpen(story);
+  }, [allStories, handleStoryOpen, selectedStory]);
 
   const handleNavChange = (tabId) => {
     if (tabId === 'profile' && !user) {
@@ -522,6 +562,8 @@ const App = () => {
         onFavorite={selectedStory ? () => toggleFavorite(selectedStory.id) : undefined}
         onSaveProgress={saveProgress}
         getProgress={getProgress}
+        onShare={handleShareStory}
+        userPreferences={profile}
       />
     </div>
   );

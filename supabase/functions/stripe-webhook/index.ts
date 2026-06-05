@@ -9,14 +9,20 @@ const relevantEvents = new Set([
   'customer.subscription.deleted',
 ]);
 
+const requiredEnv = (name: string) => {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing ${name}.`);
+  return value;
+};
+
 serve(async (req) => {
-  const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+  const stripe = new Stripe(requiredEnv('STRIPE_SECRET_KEY'), {
     apiVersion: '2024-06-20',
   });
   const signature = req.headers.get('Stripe-Signature');
-  const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+  const webhookSecret = requiredEnv('STRIPE_WEBHOOK_SECRET');
 
-  if (!signature || !webhookSecret) {
+  if (!signature) {
     return new Response('Missing webhook signature configuration.', { status: 400 });
   }
 
@@ -36,8 +42,8 @@ serve(async (req) => {
   }
 
   const supabaseAdmin = createClient(
-    Deno.env.get('SUPABASE_URL') || '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    requiredEnv('SUPABASE_URL'),
+    requiredEnv('SUPABASE_SERVICE_ROLE_KEY')
   );
 
   const upsertSubscription = async (subscription: Stripe.Subscription) => {
@@ -52,7 +58,7 @@ serve(async (req) => {
       ? new Date(subscription.current_period_end * 1000).toISOString()
       : null;
 
-    await supabaseAdmin.from('subscriptions').upsert({
+    const { error: subscriptionError } = await supabaseAdmin.from('subscriptions').upsert({
       user_id: userId,
       stripe_customer_id: customerId,
       stripe_subscription_id: subscription.id,
@@ -60,11 +66,13 @@ serve(async (req) => {
       current_period_end: currentPeriodEnd,
       updated_at: new Date().toISOString(),
     });
+    if (subscriptionError) throw subscriptionError;
 
-    await supabaseAdmin
+    const { error: profileError } = await supabaseAdmin
       .from('profiles')
       .update({ has_premium: ['active', 'trialing'].includes(subscription.status) })
       .eq('id', userId);
+    if (profileError) throw profileError;
   };
 
   if (event.type === 'checkout.session.completed') {
@@ -81,4 +89,3 @@ serve(async (req) => {
     headers: { 'Content-Type': 'application/json' },
   });
 });
-

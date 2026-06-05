@@ -9,6 +9,9 @@ const profileFromUser = (user, profile = null) => ({
   nickname: profile?.nickname || user?.user_metadata?.nickname || user?.email?.split('@')[0] || 'Dreamer',
   avatar: profile?.avatar || user?.user_metadata?.avatar || '🌙',
   age: profile?.age || user?.user_metadata?.age || '6-8',
+  bedtimeMood: profile?.bedtime_mood || user?.user_metadata?.bedtime_mood || 'calm',
+  preferredVoice: profile?.preferred_voice || user?.user_metadata?.preferred_voice || 'female',
+  defaultSleepTimer: profile?.default_sleep_timer ?? user?.user_metadata?.default_sleep_timer ?? null,
   hasPremium: Boolean(profile?.has_premium),
 });
 
@@ -63,22 +66,19 @@ export async function signUp({ email, password, nickname }) {
         nickname,
         avatar: '🌙',
         age: '6-8',
+        bedtime_mood: 'calm',
+        preferred_voice: 'female',
       },
     },
   });
   if (error) throw error;
-  if (data.user) {
-    await upsertProfile({
-      user: data.user,
-      profile: {
-        email,
-        nickname: nickname || email.split('@')[0],
-        avatar: '🌙',
-        age: '6-8',
-      },
-    });
-  }
-  return data.user;
+
+  // The database trigger creates the profile row. Profile updates happen only
+  // after the user has an authenticated session.
+  return {
+    user: data.user,
+    needsEmailConfirmation: Boolean(data.user && !data.session),
+  };
 }
 
 export async function signOut() {
@@ -91,7 +91,7 @@ export async function getProfile(user) {
   if (!supabase || !user) return null;
   const { data, error } = await supabase
     .from('profiles')
-    .select('email,nickname,avatar,age,has_premium')
+    .select('email,nickname,avatar,age,bedtime_mood,preferred_voice,default_sleep_timer,has_premium')
     .eq('id', user.id)
     .maybeSingle();
   if (error) throw error;
@@ -106,12 +106,15 @@ export async function upsertProfile({ user, profile }) {
     nickname: profile.nickname,
     avatar: profile.avatar,
     age: profile.age,
+    bedtime_mood: profile.bedtimeMood || 'calm',
+    preferred_voice: profile.preferredVoice || 'female',
+    default_sleep_timer: profile.defaultSleepTimer ?? null,
     updated_at: new Date().toISOString(),
   };
   const { data, error } = await supabase
     .from('profiles')
     .upsert(payload)
-    .select('email,nickname,avatar,age,has_premium')
+    .select('email,nickname,avatar,age,bedtime_mood,preferred_voice,default_sleep_timer,has_premium')
     .single();
   if (error) throw error;
   return profileFromUser(user, data);

@@ -7,18 +7,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const requiredEnv = (name: string) => {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing ${name}.`);
+  return value;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+    const stripe = new Stripe(requiredEnv('STRIPE_SECRET_KEY'), {
       apiVersion: '2024-06-20',
     });
     const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') || '',
-      Deno.env.get('SUPABASE_ANON_KEY') || '',
+      requiredEnv('SUPABASE_URL'),
+      requiredEnv('SUPABASE_ANON_KEY'),
       { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } }
     );
 
@@ -32,8 +38,7 @@ serve(async (req) => {
 
     const { origin } = await req.json().catch(() => ({ origin: '' }));
     const siteUrl = origin || Deno.env.get('SITE_URL') || 'http://localhost:5173';
-    const priceId = Deno.env.get('STRIPE_PRICE_ID');
-    if (!priceId) throw new Error('Missing STRIPE_PRICE_ID.');
+    const priceId = requiredEnv('STRIPE_PRICE_ID');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -61,4 +66,3 @@ serve(async (req) => {
     });
   }
 });
-

@@ -10,7 +10,7 @@ const SLEEP_TIMERS = [
 
 const StoryModal = memo(({
   story, isOpen, onClose, voiceState, onPlayVoice, userName,
-  isFavorite, onFavorite, onSaveProgress, getProgress,
+  isFavorite, onFavorite, onSaveProgress, getProgress, onShare, userPreferences,
 }) => {
   const [voiceType,    setVoiceType]    = useState('female');
   const [accent,       setAccent]       = useState('none');
@@ -18,8 +18,12 @@ const StoryModal = memo(({
   const [coverSrc,     setCoverSrc]     = useState(story?.cover);
   const [sleepTimer,   setSleepTimer]   = useState(null);   // minutes | null
   const [timerLeft,    setTimerLeft]    = useState(null);   // seconds remaining
+  const [bookmarkSaved, setBookmarkSaved] = useState(false);
+  const [shareStatus, setShareStatus] = useState('');
   const bodyRef    = useRef(null);
   const timerRef   = useRef(null);
+  const bookmarkRef = useRef(null);
+  const shareRef = useRef(null);
 
   const sentences = useMemo(() => {
     if (!story?.body) return [];
@@ -37,10 +41,15 @@ const StoryModal = memo(({
 
   useEffect(() => {
     if (story) setCoverSrc(story.cover);
-    setSleepTimer(null);
+    setVoiceType(userPreferences?.preferredVoice || 'female');
+    setSleepTimer(userPreferences?.defaultSleepTimer ?? null);
     setTimerLeft(null);
+    setBookmarkSaved(false);
+    setShareStatus('');
     clearInterval(timerRef.current);
-  }, [story]);
+    clearTimeout(bookmarkRef.current);
+    clearTimeout(shareRef.current);
+  }, [story, userPreferences?.defaultSleepTimer, userPreferences?.preferredVoice]);
 
   // Restore reading position when story opens
   useEffect(() => {
@@ -125,6 +134,26 @@ const StoryModal = memo(({
     voiceState.setRate(s);
   };
 
+  const handleBookmark = () => {
+    if (!story || !onSaveProgress) return;
+    const sentenceIndex = Math.max(voiceState.currentIdx, 0);
+    const total = Math.max(sentences.length, 1);
+    const percent = Math.round(((sentenceIndex + 1) / total) * 100);
+    onSaveProgress(story.id, percent, sentenceIndex);
+    setBookmarkSaved(true);
+    clearTimeout(bookmarkRef.current);
+    bookmarkRef.current = setTimeout(() => setBookmarkSaved(false), 1600);
+  };
+
+  const handleShare = async () => {
+    if (!story || !onShare) return;
+    const result = await onShare(story).catch(() => null);
+    if (!result) return;
+    setShareStatus(result === 'shared' ? 'Shared' : 'Copied');
+    clearTimeout(shareRef.current);
+    shareRef.current = setTimeout(() => setShareStatus(''), 1600);
+  };
+
   if (!isOpen || !story) return null;
 
   const playIcon = voiceState.isPlaying && !voiceState.isPaused ? '⏸' : '▶';
@@ -169,24 +198,19 @@ const StoryModal = memo(({
             </button>
             <button
               type="button"
-              className="story-action-btn"
+              className={`story-action-btn${shareStatus ? ' active' : ''}`}
               aria-label="Share story"
-              onClick={() => {
-                if (typeof navigator !== 'undefined' && navigator.share) {
-                  navigator.share({ title: story.title, text: `Listen to "${story.title}" on Kulala` })
-                    .catch(() => {});
-                }
-              }}
+              onClick={handleShare}
             >
-              📤 Share
+              📤 {shareStatus || 'Share'}
             </button>
             <button
               type="button"
-              className="story-action-btn"
-              aria-label="Bookmark story"
-              onClick={() => {/* bookmark feature placeholder */}}
+              className={`story-action-btn${bookmarkSaved ? ' active' : ''}`}
+              aria-label="Bookmark current position"
+              onClick={handleBookmark}
             >
-              🔖 Bookmark
+              🔖 {bookmarkSaved ? 'Bookmarked' : 'Bookmark'}
             </button>
           </div>
 
