@@ -369,9 +369,9 @@ const App = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const storyId = Number(params.get('story'));
+    const storyId = params.get('story');
     if (!storyId || selectedStory) return;
-    const story = allStories.find(item => Number(item.id) === storyId);
+    const story = allStories.find(item => item.id === storyId);
     if (story) handleStoryOpen(story);
   }, [allStories, handleStoryOpen, selectedStory]);
 

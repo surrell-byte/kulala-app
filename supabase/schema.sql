@@ -90,17 +90,17 @@ create trigger on_subscriptions_updated
 
 create or replace view public.story_catalog as
 select
-  story_id,
+  story_id as id,
   collection,
-  sort_order,
+  sort_order as "sortOrder",
   title,
   cover,
   age,
-  read_time,
+  read_time as "readTime",
   category,
   icon,
   featured,
-  is_premium,
+  is_premium as "isPremium",
   moral,
   case when is_premium then null else body end as body,
   case when is_premium then null else audio end as audio
@@ -137,17 +137,17 @@ $$;
 
 create or replace function public.get_story_for_current_user(requested_story_id uuid)
 returns table (
-  story_id uuid,
+  id uuid,
   collection text,
-  sort_order integer,
+  "sortOrder" integer,
   title text,
   cover text,
   age text,
-  read_time text,
+  "readTime" text,
   category text,
   icon text,
   featured boolean,
-  is_premium boolean,
+  "isPremium" boolean,
   body text,
   moral text,
   audio text
@@ -158,17 +158,17 @@ security definer
 set search_path = public
 as $$
   select
-    s.story_id,
+    s.story_id as id,
     s.collection,
-    s.sort_order,
+    s.sort_order as "sortOrder",
     s.title,
     s.cover,
     s.age,
-    s.read_time,
+    s.read_time as "readTime",
     s.category,
     s.icon,
     s.featured,
-    s.is_premium,
+    s.is_premium as "isPremium",
     case when s.is_premium and not public.user_has_premium() then null else s.body end,
     s.moral,
     case when s.is_premium and not public.user_has_premium() then null else s.audio end

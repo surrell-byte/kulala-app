@@ -1,6 +1,6 @@
 export const MAJI_EPISODES = [
   {
-    id: 1001,
+    id: "6b2e9894-0000-0000-0000-000000001001",
     title: "Maji and the Whispering Baobab",
     cover: "/assets/images/covers/maji_and_the_whispering_baobab.png",
     age: "6–9",
@@ -12,7 +12,7 @@ export const MAJI_EPISODES = [
     moral: "Sometimes, the answers we seek aren't given — they are grown within us."
   },
   {
-    id: 1002,
+    id: "6b2e9894-0000-0000-0000-000000001002",
     title: "Maji and the River of Patience",
     cover: "/assets/images/covers/maji_and_the_river_of_patience.png",
     age: "5–8",
@@ -23,7 +23,7 @@ export const MAJI_EPISODES = [
     moral: "Patience is not about waiting — it's about trusting that life is flowing, even in stillness."
   },
   {
-    id: 1003,
+    id: "6b2e9894-0000-0000-0000-000000001003",
     title: "Maji and the Drum of Courage",
     cover: "/assets/images/covers/maji_and_the_drum_of_courage.png",
     age: "6–9",
@@ -34,7 +34,7 @@ export const MAJI_EPISODES = [
     moral: "Courage is not the absence of fear — it is the choice to move forward, even when fear is present."
   },
   {
-    id: 1004,
+    id: "6b2e9894-0000-0000-0000-000000001004",
     title: "Maji and the Forest of Many Voices",
     cover: "/assets/images/covers/maji_and_the_forest_of_many_voices.png",
     age: "6–9",
@@ -42,14 +42,14 @@ export const MAJI_EPISODES = [
     category: "Calm",
     icon: "🦜",
     isPremium: true,
-    body: `In the days that followed, something about Maji had changed. Not in a way everyone could see. But in the quiet spaces — between thoughts, between breaths — there was a steadiness that hadn't been there before.\n\n"What comes next?" Maji asked the baobab one evening.\n\n"Now, you must learn to choose your voice," the tree said.\n\n"My voice?"\n\n"Not all voices you hear… are meant to guide you."\n\n"The forest?" Maji asked. "The one past the hill?"\n\n"The same," said the baobab. "It is called the Forest of Many Voices."\n\nThe forest stood tall and thick. Maji paused at the edge. Then took a step inside.\n\nLeaves crunched softly. And then — a voice.\n\n"You should turn back."\n\n"You don't belong here." "You'll get lost." "You always do."\n\nThe voices began to overlap. Layer upon layer. Pulling Maji in different directions.\n\n"Go left." "Go right." "Stay still." "Run."\n\nMaji dropped to the ground, covering their ears. "I can't hear myself think…"\n\nAnd then Maji remembered — the river. Slow. Steady. Patient.\n\nMaji took a deep breath. In… Out… In… Out…\n\nThe voices didn't stop. But Maji stopped reacting to them.\n\nInstead, they listened differently. Not to every voice. Just to the quiet space beneath them all.\n\nA soft, steady presence. Not loud. Not demanding. Just… calm.\n\nMaji focused on it. "What do I think?" Maji whispered.\n\n"I think…" Maji said slowly, "…I want to keep going."\n\nThe moment the words were spoken — something shifted. Some voices faded. Others grew distant.\n\nMaji stood up. Heart still beating. But steady.\n\n"I hear you," Maji said to the voices. "But I choose this."\n\nStep by step, Maji walked forward. The voices followed — but they no longer led.\n\nUntil finally — light appeared ahead. Maji stepped out of the forest.\n\nThat evening, beneath the Whispering Baobab, the baobab asked: "And your voice?"\n\nMaji smiled softly. "It's quieter than the others. But it feels… true."\n\n"That is the voice you must learn to follow."\n\nMaji looked up at the sky. "I think I will need practice."\n\n"You will," the baobab said gently. "But you have already begun."`,
+    body: null,
     moral: "Not every voice deserves your attention — learn to listen to the one that feels true within you."
   }
 ];
 
 export const EXISTING_STORIES = [
   {
-    id: 1,
+    id: "6b2e9894-0000-0000-0000-000000000001",
     title: "The Lion and the Clever Hare",
     cover: "/assets/images/covers/the-lion-and-the-clever-hare.webp",
     age: "6–9",
@@ -60,7 +60,7 @@ export const EXISTING_STORIES = [
     moral: "Wisdom and kindness are stronger than any roar."
   },
   {
-    id: 2,
+    id: "6b2e9894-0000-0000-0000-000000000002",
     title: "Whispers of the Forest",
     cover: "/assets/images/covers/whispers-of-the-forest.webp",
     age: "4–7",
@@ -71,7 +71,7 @@ export const EXISTING_STORIES = [
     moral: "When we slow down and listen, the world speaks to us in beautiful ways."
   },
   {
-    id: 3,
+    id: "6b2e9894-0000-0000-0000-000000000003",
     title: "Zara and the Moon's Gift",
     cover: "/assets/images/covers/zara-and-the-moons-gift.webp",
     age: "5–8",
@@ -82,7 +82,7 @@ export const EXISTING_STORIES = [
     moral: "The night holds gifts for those who are patient enough to wait for them."
   },
   {
-    id: 4,
+    id: "6b2e9894-0000-0000-0000-000000000004",
     title: "Timmy and the Train",
     cover: "/assets/images/covers/timmy-and-the-train.webp",
     age: "4–7",
@@ -93,7 +93,7 @@ export const EXISTING_STORIES = [
     moral: "No matter how exciting the adventure, home is the best place to return to."
   },
   {
-    id: 5,
+    id: "6b2e9894-0000-0000-0000-000000000005",
     title: "Lila and the Blinking Lighthouse",
     cover: "/assets/images/covers/lila-and-the-blinking-lighthouse.webp",
     age: "5–8",
@@ -104,7 +104,7 @@ export const EXISTING_STORIES = [
     moral: "The things we fear most are often much smaller than they seem."
   },
   {
-    id: 6,
+    id: "6b2e9894-0000-0000-0000-000000000006",
     title: "Benny's Hungry Backpack",
     cover: "/assets/images/covers/bennys-hungry-backpack.webp",
     age: "5–8",
@@ -115,7 +115,7 @@ export const EXISTING_STORIES = [
     moral: "The best adventures come from exploring the world around you."
   },
   {
-    id: 7,
+    id: "6b2e9894-0000-0000-0000-000000000007",
     title: "Zara's Talking Zoo",
     cover: "/assets/images/covers/zaras-talking-zoo.webp",
     age: "5–8",
@@ -126,7 +126,7 @@ export const EXISTING_STORIES = [
     moral: "When we truly listen, we can help those around us find their way."
   },
   {
-    id: 8,
+    id: "6b2e9894-0000-0000-0000-000000000008",
     title: "Ollie's Yesterday Orange",
     cover: "/assets/images/covers/ollies-yesterday-orange.webp",
     age: "6–9",
@@ -137,7 +137,7 @@ export const EXISTING_STORIES = [
     moral: "Some things are wonderful precisely because they can only happen once."
   },
   {
-    id: 9,
+    id: "6b2e9894-0000-0000-0000-000000000009",
     title: "Nia's Midnight Bus",
     cover: "/assets/images/covers/nias-midnight-bus.webp",
     age: "5–8",
@@ -148,7 +148,7 @@ export const EXISTING_STORIES = [
     moral: "Sometimes getting a little lost helps us find what truly matters."
   },
   {
-    id: 10,
+    id: "6b2e9894-0000-0000-0000-000000000010",
     title: "Luca's Reading Book",
     cover: "/assets/images/covers/lucas-reading-book.webp",
     age: "5–8",
@@ -159,7 +159,7 @@ export const EXISTING_STORIES = [
     moral: "Books can take you on the most incredible adventures of all."
   },
   {
-    id: 11,
+    id: "6b2e9894-0000-0000-0000-000000000011",
     title: "Safi's Unkickable Ball",
     cover: "/assets/images/covers/safis-unkickable-ball.webp",
     age: "5–9",
@@ -170,7 +170,7 @@ export const EXISTING_STORIES = [
     moral: "True skill is about precision and control, not just power."
   },
   {
-    id: 12,
+    id: "6b2e9894-0000-0000-0000-000000000012",
     title: "Dina's Wardrobe Door",
     cover: "/assets/images/covers/dinas-wardrobe-door.webp",
     age: "5–8",
@@ -181,7 +181,7 @@ export const EXISTING_STORIES = [
     moral: "Everyone just wants to find where they belong."
   },
   {
-    id: 13,
+    id: "6b2e9894-0000-0000-0000-000000000013",
     title: "Ravi the Dream Robot",
     cover: "/assets/images/covers/ravi-the-dream-robot.webp",
     age: "6–9",
@@ -192,7 +192,7 @@ export const EXISTING_STORIES = [
     moral: "Don't let doubt stop you from dreaming — every great idea starts with someone refusing to give up."
   },
   {
-    id: 14,
+    id: "6b2e9894-0000-0000-0000-000000000014",
     title: "Mina's Vanishing Bell",
     cover: "/assets/images/covers/minas-vanishing-bell.webp",
     age: "5–8",
@@ -203,7 +203,7 @@ export const EXISTING_STORIES = [
     moral: "The things that feel annoying are often the things that hold us all together."
   },
   {
-    id: 15,
+    id: "6b2e9894-0000-0000-0000-000000000015",
     title: "Toby's Backwards Tree",
     cover: "/assets/images/covers/tobys-backwards-tree.webp",
     age: "6–9",
@@ -349,7 +349,7 @@ export const EXISTING_STORIES = [
 
 export const BEDTIME_TALES = [
   {
-    id: 2001,
+    id: "6b2e9894-0000-0000-0000-000000002001",
     title: "Ari and the Alarm Clock Adventure",
     cover: "/assets/images/covers/ari-and-the-alarm-clock-adventure.webp",
     age: "5–8",
@@ -360,7 +360,7 @@ export const BEDTIME_TALES = [
     moral: "Every new morning is the beginning of an adventure worth waking up for."
   },
   {
-    id: 2002,
+    id: "6b2e9894-0000-0000-0000-000000002002",
     title: "Zeki's Hidden Crossing",
     cover: "/assets/images/covers/zekis-hidden-crossing.webp",
     age: "6–9",
@@ -371,7 +371,7 @@ export const BEDTIME_TALES = [
     moral: "You don't have to stop being afraid to keep moving forward."
   },
   {
-    id: 2003,
+    id: "6b2e9894-0000-0000-0000-000000002003",
     title: "Pippa's Self-Painting Brush",
     cover: "/assets/images/covers/pippas-self-painting-brush.webp",
     age: "5–8",
@@ -385,7 +385,7 @@ export const BEDTIME_TALES = [
 
 export const CALM_TALES = [
   {
-    id: 3001,
+    id: "6b2e9894-0000-0000-0000-000000003001",
     title: "The Fox Who Listened to Silence",
     cover: "/assets/images/covers/the-fox-who-listened-to-silence.webp",
     age: "3–7",
@@ -396,7 +396,7 @@ export const CALM_TALES = [
     moral: "Sometimes, the quietest moments bring the deepest peace."
   },
   {
-    id: 3002,
+    id: "6b2e9894-0000-0000-0000-000000003002",
     title: "The Kitten and the Coziest Spot",
     cover: "/assets/images/covers/the-kitten-and-the-coziest-spot.webp",
     age: "2–5",
@@ -407,7 +407,7 @@ export const CALM_TALES = [
     moral: "The coziest spot isn't always a place — it's a feeling of warmth and belonging."
   },
   {
-    id: 3003,
+    id: "6b2e9894-0000-0000-0000-000000003003",
     title: "The Little Rocket Who Slowed Down",
     cover: "/assets/images/covers/the-little-rocket-who-slowed-down.webp",
     age: "3–6",
@@ -418,7 +418,7 @@ export const CALM_TALES = [
     moral: "Slow down — you might discover something beautiful you'd otherwise rush past."
   },
   {
-    id: 3004,
+    id: "6b2e9894-0000-0000-0000-000000003004",
     title: "Flick and the Little Star",
     cover: "/assets/images/covers/flick-and-the-little-star.webp",
     audio: "/assets/sounds/stories/Flick_and_the_Little_Star.wav",
@@ -430,7 +430,7 @@ export const CALM_TALES = [
     moral: "Even the smallest light can help the whole sky shine."
   },
   {
-    id: 3005,
+    id: "6b2e9894-0000-0000-0000-000000003005",
     title: "The Moon's Missing Button",
     cover: "/assets/images/covers/the-moons-missing-button.webp",
     audio: "/assets/sounds/stories/The_Moon's_Missing_Button.wav",
@@ -442,7 +442,7 @@ export const CALM_TALES = [
     moral: "A helpful heart can make the whole night brighter."
   },
   {
-    id: 3006,
+    id: "6b2e9894-0000-0000-0000-000000003006",
     title: "The Boy Who Borrowed a Dream",
     cover: "/assets/images/covers/the-boy-who-borrowed-a-dream.webp",
     audio: "/assets/sounds/stories/The_Boy_Who_Borrowed_a_Dream.wav",
@@ -454,7 +454,7 @@ export const CALM_TALES = [
     moral: "Some dreams arrive when we least expect them."
   },
   {
-    id: 3007,
+    id: "6b2e9894-0000-0000-0000-000000003007",
     title: "The Secret Library of Dreams",
     cover: "/assets/images/covers/the-secret-library-of-dreams.webp",
     audio: "/assets/sounds/stories/The_Secret_Library_of_Dreams.wav",
@@ -466,7 +466,7 @@ export const CALM_TALES = [
     moral: "Every wonderful dream begins somewhere."
   },
   {
-    id: 3008,
+    id: "6b2e9894-0000-0000-0000-000000003008",
     title: "The Star That Fell Asleep",
     cover: "/assets/images/covers/the-star-that-fell-asleep.webp",
     audio: "/assets/sounds/stories/The_Star_That_Fell_Asleep.wav",
@@ -478,7 +478,7 @@ export const CALM_TALES = [
     moral: "Rest can help even the brightest lights shine again."
   },
   {
-    id: 3009,
+    id: "6b2e9894-0000-0000-0000-000000003009",
     title: "The Little Whale Who Swam Through the Sky",
     cover: "/assets/images/covers/the-little-whale-who-swam-through-the-sky.webp",
     age: "4–8",
@@ -489,7 +489,7 @@ export const CALM_TALES = [
     moral: "Wonder can carry us higher than we ever imagined."
   },
   {
-    id: 3010,
+    id: "6b2e9894-0000-0000-0000-000000003010",
     title: "The Owl Who Lost the Night",
     cover: "/assets/images/covers/the-owl-who-lost-the-night.webp",
     age: "4–8",
@@ -505,13 +505,13 @@ export const ALL_STORIES = [...MAJI_EPISODES, ...EXISTING_STORIES, ...BEDTIME_TA
 
 export const CONTINUE_READING = [
   {
-    id: 1001,
+    id: "6b2e9894-0000-0000-0000-000000001001",
     title: "Maji and the Whispering Baobab",
     progress: 20,
     cover: "/assets/images/covers/maji_and_the_whispering_baobab.png"
   },
   {
-    id: 1002,
+    id: "6b2e9894-0000-0000-0000-000000001002",
     title: "Maji and the River of Patience",
     progress: 55,
     cover: "/assets/images/covers/maji_and_the_river_of_patience.png"

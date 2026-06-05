@@ -16,15 +16,15 @@ const profileFromUser = (user, profile = null) => ({
 });
 
 const storyFromRow = (row) => ({
-  id: row.story_id,
+  id: row.id || row.story_id,
   title: row.title,
   cover: row.cover,
   age: row.age,
-  readTime: row.read_time,
+  readTime: row.readTime || row.read_time,
   category: row.category,
   icon: row.icon,
   featured: row.featured,
-  isPremium: row.is_premium,
+  isPremium: row.isPremium ?? row.is_premium,
   body: row.body,
   moral: row.moral,
   audio: row.audio,
@@ -62,6 +62,8 @@ export async function signUp({ email, password, nickname }) {
     email,
     password,
     options: {
+      // Directs the user back to your app after they confirm their email
+      emailRedirectTo: window.location.origin,
       data: {
         nickname,
         avatar: '🌙',
@@ -124,8 +126,9 @@ export async function listStories() {
   if (!supabase) return null;
   const { data, error } = await supabase
     .from('story_catalog')
-    .select('*')
-    .order('sort_order', { ascending: true });
+    .select('*') 
+    // View uses aliased name for sorting
+    .order('sortOrder', { ascending: true });
   if (error) throw error;
   return data.map(storyFromRow);
 }
