@@ -15,7 +15,7 @@ insert into public.stories (
   audio
 ) values
 (
-    1001,
+    '6b2e9894-0000-0000-0000-000000001001',
     'maji',
     1,
     'Maji and the Whispering Baobab',
@@ -119,7 +119,7 @@ That night, Maji fell asleep beneath the Whispering Baobab, surrounded by the qu
     null
   ),
 (
-    1002,
+    '6b2e9894-0000-0000-0000-000000001002',
     'maji',
     2,
     'Maji and the River of Patience',
@@ -175,7 +175,7 @@ Above them, the first stars began to appear again. And this time, as Maji watche
     null
   ),
 (
-    1003,
+    '6b2e9894-0000-0000-0000-000000001003',
     'maji',
     3,
     'Maji and the Drum of Courage',
@@ -253,7 +253,7 @@ The tree''s leaves shimmered softly. "Yes," it said.
     null
   ),
 (
-    1004,
+    '6b2e9894-0000-0000-0000-000000001004',
     'maji',
     4,
     'Maji and the Forest of Many Voices',
@@ -329,7 +329,7 @@ Maji looked up at the sky. "I think I will need practice."
     null
   ),
 (
-    1,
+    '6b2e9894-0000-0000-0000-000000000001',
     'classic',
     1,
     'The Lion and the Clever Hare',
@@ -367,7 +367,7 @@ The savanna grew silent. Then Lion slowly smiled — the first true smile anyone
     null
   ),
 (
-    2,
+    '6b2e9894-0000-0000-0000-000000000002',
     'classic',
     2,
     'Whispers of the Forest',
@@ -387,7 +387,7 @@ A young boy named Sasa learned to sit so still that the leaves would brush his c
     null
   ),
 (
-    3,
+    '6b2e9894-0000-0000-0000-000000000003',
     'classic',
     3,
     'Zara and the Moon''s Gift',
@@ -407,7 +407,7 @@ One night, the moon noticed her watching and sent down a silver thread of light.
     null
   ),
 (
-    4,
+    '6b2e9894-0000-0000-0000-000000000004',
     'classic',
     4,
     'Timmy and the Train',
@@ -451,7 +451,7 @@ Timmy hurried off the train. "Will you ever stop again?" he asked the conductor.
     null
   ),
 (
-    5,
+    '6b2e9894-0000-0000-0000-000000000005',
     'classic',
     5,
     'Lila and the Blinking Lighthouse',
@@ -489,7 +489,7 @@ Lila smiled so wide her cheeks hurt. She wasn''t scared anymore. Not of the ligh
     null
   ),
 (
-    6,
+    '6b2e9894-0000-0000-0000-000000000006',
     'classic',
     6,
     'Benny''s Hungry Backpack',
@@ -523,7 +523,7 @@ Best of all, it stopped asking for snacks every five minutes. Well… mostly. Th
     null
   ),
 (
-    7,
+    '6b2e9894-0000-0000-0000-000000000007',
     'classic',
     7,
     'Zara''s Talking Zoo',
@@ -559,7 +559,7 @@ Zara smiled all the way home. And that night, she could have sworn one cricket w
     null
   ),
 (
-    8,
+    '6b2e9894-0000-0000-0000-000000000008',
     'classic',
     8,
     'Ollie''s Yesterday Orange',
@@ -595,7 +595,7 @@ That night, tucked safely into bed, Ollie placed the golden seed in a small jar 
     null
   ),
 (
-    9,
+    '6b2e9894-0000-0000-0000-000000000009',
     'classic',
     9,
     'Nia''s Midnight Bus',
@@ -633,7 +633,7 @@ Suddenly — DING! A bright golden sign lit up at the front of the bus: HOME. Ou
     null
   ),
 (
-    10,
+    '6b2e9894-0000-0000-0000-000000000010',
     'classic',
     10,
     'Luca''s Reading Book',
@@ -669,7 +669,7 @@ WHOOSH! Luca landed back on the green couch. Rain still tapped softly against th
     null
   ),
 (
-    11,
+    '6b2e9894-0000-0000-0000-000000000011',
     'classic',
     11,
     'Safi''s Unkickable Ball',
@@ -705,7 +705,7 @@ The stadium exploded with cheers. Bruno spun proudly. "NOW that was proper footb
     null
   ),
 (
-    12,
+    '6b2e9894-0000-0000-0000-000000000012',
     'classic',
     12,
     'Dina''s Wardrobe Door',
@@ -741,7 +741,7 @@ CREEEAK. Suddenly Dina stood back in her bedroom again. Her normal clothes hung 
     null
   ),
 (
-    13,
+    '6b2e9894-0000-0000-0000-000000000013',
     'classic',
     13,
     'Ravi the Dream Robot',
@@ -781,7 +781,7 @@ WHOOSHHH. Ravi landed back in the garage. Bolt was still there. The robot looked
     null
   ),
 (
-    14,
+    '6b2e9894-0000-0000-0000-000000000014',
     'classic',
     14,
     'Mina''s Vanishing Bell',
@@ -819,7 +819,7 @@ Back downstairs, everything was normal again. And at exactly 3:00 that afternoon
     null
   ),
 (
-    15,
+    '6b2e9894-0000-0000-0000-000000000015',
     'classic',
     15,
     'Toby''s Backwards Tree',
@@ -851,7 +851,7 @@ Mr. Burrows cheered loudly. "The balance is restored!" "Wait," Toby said. "Will 
     null
   ),
 (
-    16,
+    '6b2e9894-0000-0000-0000-000000000016',
     'classic',
     16,
     'Potty the Couch Potato',
@@ -877,7 +877,7 @@ By sunset, Potty flopped onto the grass beside his friends. "Tired?" Zippy asked
     null
   ),
 (
-    17,
+    '6b2e9894-0000-0000-0000-000000000017',
     'classic',
     17,
     'Niko''s Noisy Sneakers',
@@ -911,7 +911,7 @@ Niko leaned closer. From behind the door came the faintest noise. Not a roar. No
     null
   ),
 (
-    18,
+    '6b2e9894-0000-0000-0000-000000000018',
     'classic',
     18,
     'The Moon''s Missing Corner',
@@ -943,7 +943,7 @@ By dawn, the corner was safely back where it belonged. The Moon looked whole aga
     null
   ),
 (
-    19,
+    '6b2e9894-0000-0000-0000-000000000019',
     'classic',
     19,
     'Bara and the Bubble Storm',
@@ -979,7 +979,7 @@ Bara swallowed hard. Finally… what?
     null
   ),
 (
-    20,
+    '6b2e9894-0000-0000-0000-000000000020',
     'classic',
     20,
     'Kiki''s Invisible Kite',
@@ -1013,7 +1013,7 @@ The other kites suddenly grew quiet. Elder Gale looked toward the far side of th
     null
   ),
 (
-    21,
+    '6b2e9894-0000-0000-0000-000000000021',
     'classic',
     21,
     'The Pillow Under the Floor',
@@ -1047,7 +1047,7 @@ Maya stared upward. The silver mist was already drifting toward a glowing crack 
     null
   ),
 (
-    22,
+    '6b2e9894-0000-0000-0000-000000000022',
     'classic',
     22,
     'The Day the Fridge Sneezed',
@@ -1081,7 +1081,7 @@ Benji swallowed. "What happens at stage five?" Nobody answered. Slowly, the frid
     null
   ),
 (
-    23,
+    '6b2e9894-0000-0000-0000-000000000023',
     'classic',
     23,
     'Tomo''s Backwards Bicycle',
@@ -1117,7 +1117,7 @@ Tomo stared at the tower. A deep metallic voice echoed from inside. "Who rides t
     null
   ),
 (
-    24,
+    '6b2e9894-0000-0000-0000-000000000024',
     'classic',
     24,
     'Pico and the Pocket Tornado',
@@ -1151,7 +1151,7 @@ The enormous door slowly opened. A powerful gust swept across the town. Twister 
     null
   ),
 (
-    25,
+    '6b2e9894-0000-0000-0000-000000000025',
     'classic',
     25,
     'Lulu''s Upside Down Umbrella',
@@ -1183,7 +1183,7 @@ A loud alarm echoed throughout the Weatherworks. WARNING. WARNING. Every cloud f
     null
   ),
 (
-    26,
+    '6b2e9894-0000-0000-0000-000000000026',
     'classic',
     26,
     'The Cookie That Followed Benji',
@@ -1215,7 +1215,7 @@ The Crumb King slowly looked down. Not at the bakery. Not at the townspeople. At
     null
   ),
 (
-    2001,
+    '6b2e9894-0000-0000-0000-000000002001',
     'bedtime',
     1,
     'Ari and the Alarm Clock Adventure',
@@ -1285,7 +1285,7 @@ But this time, Ari smiled as he climbed out of bed. Because maybe waking up wasn
     null
   ),
 (
-    2002,
+    '6b2e9894-0000-0000-0000-000000002002',
     'bedtime',
     2,
     'Zeki''s Hidden Crossing',
@@ -1343,7 +1343,7 @@ And as Zeki walked home, he didn''t feel quite as lost anymore.',
     null
   ),
 (
-    2003,
+    '6b2e9894-0000-0000-0000-000000002003',
     'bedtime',
     3,
     'Pippa''s Self-Painting Brush',
@@ -1393,7 +1393,7 @@ From then on, the magical brush still helped sometimes. But mostly, Pippa painte
     null
   ),
 (
-    3001,
+    '6b2e9894-0000-0000-0000-000000003001',
     'calm',
     1,
     'The Fox Who Listened to Silence',
@@ -1445,7 +1445,7 @@ Her eyes grew heavy. And in the gentle hush of the forest, Sera drifted into a d
     null
   ),
 (
-    3002,
+    '6b2e9894-0000-0000-0000-000000003002',
     'calm',
     2,
     'The Kitten and the Coziest Spot',
@@ -1497,7 +1497,7 @@ Miso''s eyes slowly closed. And as she drifted off to sleep, she realized: the c
     null
   ),
 (
-    3003,
+    '6b2e9894-0000-0000-0000-000000003003',
     'calm',
     3,
     'The Little Rocket Who Slowed Down',
@@ -1553,7 +1553,7 @@ As the stars twinkled gently and the universe hummed its quiet lullaby, Riko dim
     null
   ),
 (
-    3004,
+    '6b2e9894-0000-0000-0000-000000003004',
     'calm',
     4,
     'Flick and the Little Star',
@@ -1591,7 +1591,7 @@ The end.',
     '/assets/sounds/stories/Flick_and_the_Little_Star.wav'
   ),
 (
-    3005,
+    '6b2e9894-0000-0000-0000-000000003005',
     'calm',
     5,
     'The Moon''s Missing Button',
@@ -1633,7 +1633,7 @@ The End.',
     '/assets/sounds/stories/The_Moon''s_Missing_Button.wav'
   ),
 (
-    3006,
+    '6b2e9894-0000-0000-0000-000000003006',
     'calm',
     6,
     'The Boy Who Borrowed a Dream',
@@ -1689,7 +1689,7 @@ The End.',
     '/assets/sounds/stories/The_Boy_Who_Borrowed_a_Dream.wav'
   ),
 (
-    3007,
+    '6b2e9894-0000-0000-0000-000000003007',
     'calm',
     7,
     'The Secret Library of Dreams',
@@ -1747,7 +1747,7 @@ The End.',
     '/assets/sounds/stories/The_Secret_Library_of_Dreams.wav'
   ),
 (
-    3008,
+    '6b2e9894-0000-0000-0000-000000003008',
     'calm',
     8,
     'The Star That Fell Asleep',
@@ -1807,7 +1807,7 @@ The End.',
     '/assets/sounds/stories/The_Star_That_Fell_Asleep.wav'
   ),
 (
-    3009,
+    '6b2e9894-0000-0000-0000-000000003009',
     'calm',
     9,
     'The Little Whale Who Swam Through the Sky',
@@ -1867,7 +1867,7 @@ The End.',
     null
   ),
 (
-    3010,
+    '6b2e9894-0000-0000-0000-000000003010',
     'calm',
     10,
     'The Owl Who Lost the Night',

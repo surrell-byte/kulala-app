@@ -14,13 +14,8 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
-alter table public.profiles
-  add column if not exists bedtime_mood text not null default 'calm',
-  add column if not exists preferred_voice text not null default 'female',
-  add column if not exists default_sleep_timer integer;
-
 create table if not exists public.stories (
-  story_id integer primary key,
+  story_id uuid primary key default gen_random_uuid(),
   collection text not null check (collection in ('maji', 'bedtime', 'calm', 'classic')),
   sort_order integer not null default 0,
   title text not null,
@@ -38,16 +33,20 @@ create table if not exists public.stories (
   updated_at timestamptz not null default now()
 );
 
+create index if not exists stories_collection_idx on public.stories (collection);
+create index if not exists stories_featured_idx on public.stories (featured) where featured = true;
+create index if not exists stories_sort_order_idx on public.stories (sort_order);
+
 create table if not exists public.favorites (
   user_id uuid not null references auth.users(id) on delete cascade,
-  story_id integer not null references public.stories(story_id) on delete cascade,
+  story_id uuid not null references public.stories(story_id) on delete cascade,
   created_at timestamptz not null default now(),
   primary key (user_id, story_id)
 );
 
 create table if not exists public.story_progress (
   user_id uuid not null references auth.users(id) on delete cascade,
-  story_id integer not null references public.stories(story_id) on delete cascade,
+  story_id uuid not null references public.stories(story_id) on delete cascade,
   percent integer not null default 0 check (percent >= 0 and percent <= 100),
   sentence_index integer not null default 0,
   updated_at timestamptz not null default now(),
@@ -63,6 +62,31 @@ create table if not exists public.subscriptions (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create index if not exists subscriptions_user_id_status_idx on public.subscriptions (user_id, status);
+
+-- Automated updated_at logic
+create or replace function public.handle_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+create trigger on_profiles_updated
+  before update on public.profiles
+  for each row execute function public.handle_updated_at();
+
+create trigger on_stories_updated
+  before update on public.stories
+  for each row execute function public.handle_updated_at();
+
+create trigger on_subscriptions_updated
+  before update on public.subscriptions
+  for each row execute function public.handle_updated_at();
 
 create or replace view public.story_catalog as
 select
@@ -89,24 +113,31 @@ stable
 security definer
 set search_path = public
 as $$
-  select exists (
-    select 1
-    from public.profiles
-    where id = auth.uid()
-      and has_premium = true
-  )
-  or exists (
-    select 1
-    from public.subscriptions
-    where user_id = auth.uid()
-      and status in ('active', 'trialing')
-      and (current_period_end is null or current_period_end > now())
-  );
+  -- Performance optimization: check if we even have an authenticated user first
+  select case 
+    when auth.uid() is null then false
+    else (
+      exists (
+        select 1
+        from public.profiles
+        where id = auth.uid()
+          and has_premium = true
+      )
+      or exists (
+        select 1
+        from public.subscriptions
+        where user_id = auth.uid()
+          -- Include 'past_due' to allow a grace period for payment failures
+          and status in ('active', 'trialing', 'past_due')
+          and (current_period_end is null or current_period_end > now())
+      )
+    )
+  end;
 $$;
 
-create or replace function public.get_story_for_current_user(requested_story_id integer)
+create or replace function public.get_story_for_current_user(requested_story_id uuid)
 returns table (
-  story_id integer,
+  story_id uuid,
   collection text,
   sort_order integer,
   title text,
@@ -234,6 +265,11 @@ security definer
 set search_path = public
 as $$
 begin
+  -- Allow service_role (Dashboard/Admin) to bypass the restriction
+  if current_setting('role') = 'service_role' then
+    return new;
+  end if;
+
   if old.has_premium is distinct from new.has_premium then
     new.has_premium := old.has_premium;
   end if;
@@ -247,7 +283,7 @@ before update on public.profiles
 for each row execute function public.prevent_profile_entitlement_self_update();
 
 grant select on public.story_catalog to anon, authenticated;
-grant execute on function public.get_story_for_current_user(integer) to anon, authenticated;
+grant execute on function public.get_story_for_current_user(uuid) to anon, authenticated;
 grant execute on function public.user_has_premium() to authenticated;
 grant select, insert, update on public.profiles to authenticated;
 grant select, insert, delete on public.favorites to authenticated;
