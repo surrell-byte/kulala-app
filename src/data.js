@@ -84,7 +84,7 @@ export const EXISTING_STORIES = [
   {
     id: 4,
     title: "Timmy and the Train",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/timmy-and-the-train.webp",
     age: "4–7",
     readTime: "7 min",
     category: "Adventure",
@@ -95,7 +95,7 @@ export const EXISTING_STORIES = [
   {
     id: 5,
     title: "Lila and the Blinking Lighthouse",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/lila-and-the-blinking-lighthouse.webp",
     age: "5–8",
     readTime: "7 min",
     category: "Adventure",
@@ -106,7 +106,7 @@ export const EXISTING_STORIES = [
   {
     id: 6,
     title: "Benny's Hungry Backpack",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/bennys-hungry-backpack.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",
@@ -117,7 +117,7 @@ export const EXISTING_STORIES = [
   {
     id: 7,
     title: "Zara's Talking Zoo",
-    cover: "/assets/images/covers/fox-listened-to-silence.png",
+    cover: "/assets/images/covers/zaras-talking-zoo.webp",
     age: "5–8",
     readTime: "7 min",
     category: "Adventure",
@@ -128,7 +128,7 @@ export const EXISTING_STORIES = [
   {
     id: 8,
     title: "Ollie's Yesterday Orange",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/ollies-yesterday-orange.webp",
     age: "6–9",
     readTime: "7 min",
     category: "Adventure",
@@ -139,7 +139,7 @@ export const EXISTING_STORIES = [
   {
     id: 9,
     title: "Nia's Midnight Bus",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/nias-midnight-bus.webp",
     age: "5–8",
     readTime: "7 min",
     category: "Calm",
@@ -150,7 +150,7 @@ export const EXISTING_STORIES = [
   {
     id: 10,
     title: "Luca's Reading Book",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/lucas-reading-book.webp",
     age: "5–8",
     readTime: "7 min",
     category: "Adventure",
@@ -161,7 +161,7 @@ export const EXISTING_STORIES = [
   {
     id: 11,
     title: "Safi's Unkickable Ball",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/safis-unkickable-ball.webp",
     age: "5–9",
     readTime: "8 min",
     category: "Adventure",
@@ -172,7 +172,7 @@ export const EXISTING_STORIES = [
   {
     id: 12,
     title: "Dina's Wardrobe Door",
-    cover: "/assets/images/covers/floating-cloud.png",
+    cover: "/assets/images/covers/dinas-wardrobe-door.webp",
     age: "5–8",
     readTime: "8 min",
     category: "Adventure",
@@ -311,7 +311,7 @@ export const EXISTING_STORIES = [
   {
     id: 24,
     title: "Pico and the Pocket Tornado",
-    cover: "/assets/images/covers/ellie-elephant-slow-steps.png",
+    cover: "/assets/images/covers/pico-and-the-pocket-tornado.webp",
     age: "5–8",
     readTime: "6 min",
     category: "Adventure",

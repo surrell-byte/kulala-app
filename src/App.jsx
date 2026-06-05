@@ -190,15 +190,17 @@ const App = () => {
         calmMode={calmMode}
         setCalmMode={setCalmMode}
         onOpenProfile={() => handleNavChange('profile')}
+        onOpenHome={() => setView('home')}
       />
 
-      <main style={{ paddingBottom: 72, position: 'relative', zIndex: 1 }}>
+      <main id="main-content" style={{ paddingBottom: 72, position: 'relative', zIndex: 1 }}>
         {/* ── HOME ─────────────────────────────────────────────────── */}
         {view === 'home' && (
           <>
             <HeroBanner
               story={MAJI_EPISODES[0]}
               onPlay={() => setSelectedStory(MAJI_EPISODES[0])}
+              onMoreInfo={() => setSelectedStory(MAJI_EPISODES[0])}
             />
             {continueReadingStories.length > 0 && (
               <ContinueRow
@@ -292,7 +294,7 @@ const App = () => {
                 onMouseEnter={e => e.currentTarget.style.color = '#f2ead8'}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(242,234,216,0.45)'}
               >
-                ← Return to Library
+                ← Return to Home
               </button>
             </div>
             <ProfileTab userProfile={profile} onLogout={handleLogout} />

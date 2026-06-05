@@ -11,19 +11,31 @@ const StoryCard = memo(({ story, onOpen, isFavorite, onFavorite }) => {
   };
 
   return (
-    <div className="story-card" onClick={() => onOpen(story)}>
+    <div className="story-card">
       <div className="story-card-inner">
-        <img
-          className="story-card-img"
-          src={cover}
-          alt={story.title}
-          loading="lazy"
-          onError={() => setCover(generateFallbackCover(story.title, story.category))}
-        />
-        <div className="story-card-overlay" />
-
-        {/* Favorite button */}
         <button
+          type="button"
+          className="story-card-open"
+          onClick={() => onOpen(story)}
+          aria-label={`Open ${story.title}`}
+        >
+          <img
+            className="story-card-img"
+            src={cover}
+            alt=""
+            loading="lazy"
+            onError={() => setCover(generateFallbackCover(story.title, story.category))}
+          />
+          <div className="story-card-overlay" />
+          {story.isPremium && <div className="premium-badge">✦ Premium</div>}
+          <div className="story-card-icon" aria-hidden="true">{story.icon}</div>
+          <div className="story-card-bottom">
+            <span className="story-card-cat">{story.category}</span>
+          </div>
+        </button>
+
+        <button
+          type="button"
           className={`card-fav-btn${favorite ? ' is-favorite' : ''}`}
           onClick={handleFavClick}
           aria-label={favorite ? `Remove ${story.title} from saved` : `Save ${story.title}`}
@@ -31,15 +43,11 @@ const StoryCard = memo(({ story, onOpen, isFavorite, onFavorite }) => {
         >
           {favorite ? '⭐' : '☆'}
         </button>
-
-        {story.isPremium && <div className="premium-badge">✦ Premium</div>}
-        <div className="story-card-icon">{story.icon}</div>
-        <div className="story-card-bottom">
-          <p className="story-card-cat">{story.category}</p>
-        </div>
       </div>
-      <p className="story-card-title">{story.title}</p>
-      <p className="story-card-meta">⏱ {story.readTime} · Age {story.age}</p>
+      <button type="button" className="story-card-text-btn" onClick={() => onOpen(story)}>
+        <span className="story-card-title">{story.title}</span>
+        <span className="story-card-meta">⏱ {story.readTime} · Age {story.age}</span>
+      </button>
     </div>
   );
 });

@@ -128,10 +128,11 @@ const StoryModal = memo(({
   if (!isOpen || !story) return null;
 
   const playIcon = voiceState.isPlaying && !voiceState.isPaused ? '⏸' : '▶';
+  const titleId = `story-modal-title-${story.id}`;
 
   return (
     <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal-sheet">
+      <div className="modal-sheet" role="dialog" aria-modal="true" aria-labelledby={titleId}>
 
         {/* Cover image */}
         <div className="modal-hero">
@@ -141,7 +142,7 @@ const StoryModal = memo(({
             onError={() => setCoverSrc(generateFallbackCover(story.title, story.category))}
           />
           <div className="modal-hero-overlay" />
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close story">✕</button>
         </div>
 
         <div className="modal-body">
@@ -153,11 +154,12 @@ const StoryModal = memo(({
             {story.isPremium && <span className="meta-pill gold">✦ Premium</span>}
           </div>
 
-          <h2 className="modal-title">{story.title}</h2>
+          <h2 className="modal-title" id={titleId}>{story.title}</h2>
 
           {/* #5 Story action row: favorite / share / bookmark */}
           <div className="story-action-row">
             <button
+              type="button"
               className={`story-action-btn${isFavorite ? ' active' : ''}`}
               onClick={onFavorite}
               aria-label={isFavorite ? 'Remove from saved' : 'Save story'}
@@ -166,6 +168,7 @@ const StoryModal = memo(({
               {isFavorite ? '⭐' : '☆'} {isFavorite ? 'Saved' : 'Save'}
             </button>
             <button
+              type="button"
               className="story-action-btn"
               aria-label="Share story"
               onClick={() => {
@@ -178,6 +181,7 @@ const StoryModal = memo(({
               📤 Share
             </button>
             <button
+              type="button"
               className="story-action-btn"
               aria-label="Bookmark story"
               onClick={() => {/* bookmark feature placeholder */}}
@@ -192,6 +196,7 @@ const StoryModal = memo(({
             {/* Row 1: play + stop + voice buttons */}
             <div className="modal-controls-playrow">
               <button
+                type="button"
                 className="play-pause-btn"
                 onClick={handlePlay}
                 aria-label={voiceState.isPlaying && !voiceState.isPaused ? 'Pause' : 'Play'}
@@ -199,7 +204,7 @@ const StoryModal = memo(({
                 {playIcon}
               </button>
               {voiceState.isPlaying && (
-                <button className="stop-btn" onClick={voiceState.stop} aria-label="Stop narration">■</button>
+                <button type="button" className="stop-btn" onClick={voiceState.stop} aria-label="Stop narration">■</button>
               )}
               {[
                 { id: 'female', label: '♀ Female' },
@@ -207,6 +212,7 @@ const StoryModal = memo(({
                 { id: 'elder',  label: '🪵 Elder'  },
               ].map(v => (
                 <button
+                  type="button"
                   key={v.id}
                   className={`voice-btn${voiceType === v.id ? ' active' : ''}`}
                   onClick={() => setVoiceType(v.id)}
@@ -222,6 +228,7 @@ const StoryModal = memo(({
               <span className="speed-label">Speed</span>
               {[0.7, 1.0, 1.2].map(s => (
                 <button
+                  type="button"
                   key={s}
                   className={`speed-btn${speed === s ? ' active' : ''}`}
                   onClick={() => handleSpeed(s)}
@@ -239,6 +246,7 @@ const StoryModal = memo(({
               </span>
               {SLEEP_TIMERS.map(t => (
                 <button
+                  type="button"
                   key={t.label}
                   className={`sleep-timer-btn${sleepTimer === t.minutes ? ' active' : ''}`}
                   onClick={() => handleSleepTimer(t.minutes)}
