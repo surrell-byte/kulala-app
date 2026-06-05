@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "supabase:seed": "node scripts/export-supabase-seed.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

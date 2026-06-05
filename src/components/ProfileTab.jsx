@@ -1,18 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const AVATARS = ['🌙', '⭐', '🌟', '🦁', '🌳', '🦜', '🌊', '🥁', '🦋', '🌺', '🐘', '🦒'];
 
-const ProfileTab = ({ userProfile, onLogout }) => {
+const ProfileTab = ({ user, userProfile, onLogout, onSaveProfile }) => {
   const [nickname, setNickname] = useState(userProfile?.nickname || '');
   const [age, setAge]           = useState(userProfile?.age      || '6-8');
   const [avatar, setAvatar]     = useState(userProfile?.avatar   || '🌙');
   const [saved, setSaved]       = useState(false);
+  const [error, setError]       = useState('');
 
-  const save = () => {
+  useEffect(() => {
+    setNickname(userProfile?.nickname || '');
+    setAge(userProfile?.age || '6-8');
+    setAvatar(userProfile?.avatar || '🌙');
+  }, [userProfile]);
+
+  const save = async () => {
     const updated = { ...userProfile, nickname, age, avatar };
-    try { localStorage.setItem('kulala_demo_user', JSON.stringify(updated)); } catch {}
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setError('');
+    try {
+      if (onSaveProfile) {
+        await onSaveProfile({ user, profile: updated });
+      } else {
+        try { localStorage.setItem('kulala_demo_user', JSON.stringify(updated)); } catch {}
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      setError(err.message || 'Could not save profile.');
+    }
   };
 
   return (
@@ -59,6 +75,11 @@ const ProfileTab = ({ userProfile, onLogout }) => {
       <button className="btn-save" onClick={save}>
         {saved ? '✓ Saved!' : 'Save Changes'}
       </button>
+      {error && (
+        <p style={{ color: '#f87171', fontSize: '0.8rem', textAlign: 'center', marginBottom: 12, fontWeight: 600 }}>
+          {error}
+        </p>
+      )}
       <button className="btn-logout" onClick={onLogout}>
         Sign Out
       </button>

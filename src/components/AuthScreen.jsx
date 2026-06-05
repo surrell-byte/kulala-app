@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { backendStatus, getProfile, signIn, signUp } from '../services/kulalaApi';
 
 const AuthScreen = ({ onLogin, reason }) => {
   const [mode, setMode]         = useState(reason === 'signup' || reason === 'premium' ? 'signup' : 'login');
@@ -7,17 +8,31 @@ const AuthScreen = ({ onLogin, reason }) => {
   const [nickname, setNickname] = useState('');
   const [error, setError]       = useState('');
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email || !password) { setError('Please fill in all fields.'); return; }
     if (mode === 'signup' && !nickname) { setError('Choose a name!'); return; }
-    const profile = {
-      email,
-      nickname: nickname || email.split('@')[0],
-      avatar: '🌙',
-      age: '6-8'
-    };
-    try { localStorage.setItem('kulala_demo_user', JSON.stringify(profile)); } catch {}
-    onLogin({ uid: 'demo', email }, profile);
+    setError('');
+    try {
+      if (backendStatus.isConfigured) {
+        const user = mode === 'signup'
+          ? await signUp({ email, password, nickname })
+          : await signIn({ email, password });
+        const profile = await getProfile(user);
+        onLogin(user, profile);
+        return;
+      }
+
+      const profile = {
+        email,
+        nickname: nickname || email.split('@')[0],
+        avatar: '🌙',
+        age: '6-8'
+      };
+      try { localStorage.setItem('kulala_demo_user', JSON.stringify(profile)); } catch {}
+      onLogin({ uid: 'demo', email }, profile);
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -31,7 +46,7 @@ const AuthScreen = ({ onLogin, reason }) => {
         </h2>
         <p className="auth-subtitle">
           {reason === 'premium'
-            ? 'Create a free account to unlock premium stories.'
+            ? 'Sign in to access premium stories and saved progress.'
             : mode === 'login'
             ? 'Step into the world of African bedtime magic.'
             : "Your child's story journey begins here."}

@@ -1,6 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
-import { MAJI_EPISODES, BEDTIME_TALES, CALM_TALES, EXISTING_STORIES, ALL_STORIES, CONTINUE_READING } from './data';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { MAJI_EPISODES, BEDTIME_TALES, CALM_TALES, EXISTING_STORIES, CONTINUE_READING } from './data';
 import { useVoiceSynthesis } from './hooks';
+import {
+  backendStatus,
+  getCurrentSession,
+  getProfile,
+  getStory,
+  listFavorites,
+  listProgress,
+  listStories,
+  onAuthStateChange,
+  saveProgress as saveRemoteProgress,
+  setFavorite,
+  signOut,
+  startCheckout,
+  upsertProfile,
+} from './services/kulalaApi';
 
 import BackgroundWorld from './components/BackgroundWorld';
 import Header      from './components/Header';
@@ -19,6 +34,20 @@ const NAV_TABS = [
   { id: 'profile',   label: 'Me',      icon: '👤' },
 ];
 
+const LOCAL_GROUPS = {
+  maji: MAJI_EPISODES,
+  bedtime: BEDTIME_TALES,
+  calm: CALM_TALES,
+  classic: EXISTING_STORIES,
+};
+
+const groupStories = (stories) => ({
+  maji: stories.filter(story => story.collection === 'maji'),
+  bedtime: stories.filter(story => story.collection === 'bedtime'),
+  calm: stories.filter(story => story.collection === 'calm'),
+  classic: stories.filter(story => story.collection === 'classic'),
+});
+
 const App = () => {
   const [user,          setUser]          = useState(null);
   const [profile,       setProfile]       = useState(null);
@@ -30,11 +59,71 @@ const App = () => {
   const [toast,         setToast]         = useState(null);
   const [favorites,     setFavorites]     = useState([]);
   const [storyProgress, setStoryProgress] = useState({});
+  const [storyGroups,   setStoryGroups]   = useState(LOCAL_GROUPS);
 
   const voice = useVoiceSynthesis();
 
-  /* ── 1. FIXED: useEffect instead of useState for side-effects ─────── */
+  const allStories = useMemo(
+    () => [
+      ...storyGroups.maji,
+      ...storyGroups.classic,
+      ...storyGroups.bedtime,
+      ...storyGroups.calm,
+    ],
+    [storyGroups]
+  );
+
+  const showToast = useCallback((msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2800);
+  }, []);
+
+  const loadUserLibrary = useCallback(async (currentUser) => {
+    if (!backendStatus.isConfigured || !currentUser) return;
+    const [remoteFavorites, remoteProgress] = await Promise.all([
+      listFavorites(currentUser),
+      listProgress(currentUser),
+    ]);
+    setFavorites(remoteFavorites);
+    setStoryProgress(remoteProgress);
+  }, []);
+
+  /* ── Restore auth session ────────────────────────────────────────── */
   useEffect(() => {
+    if (backendStatus.isConfigured) {
+      let isMounted = true;
+      getCurrentSession()
+        .then(async ({ user: currentUser, profile: currentProfile }) => {
+          if (!isMounted) return;
+          setUser(currentUser);
+          setProfile(currentProfile);
+          if (currentUser) await loadUserLibrary(currentUser);
+        })
+        .catch(err => console.error('Failed to restore Supabase session:', err));
+
+      const unsubscribe = onAuthStateChange(async (currentUser) => {
+        setUser(currentUser);
+        if (!currentUser) {
+          setProfile(null);
+          setFavorites([]);
+          setStoryProgress({});
+          return;
+        }
+        try {
+          const currentProfile = await getProfile(currentUser);
+          setProfile(currentProfile);
+          await loadUserLibrary(currentUser);
+        } catch (err) {
+          console.error('Failed to load user library:', err);
+        }
+      });
+
+      return () => {
+        isMounted = false;
+        unsubscribe();
+      };
+    }
+
     try {
       const stored = localStorage.getItem('kulala_demo_user');
       if (stored) {
@@ -45,70 +134,120 @@ const App = () => {
     } catch (err) {
       console.error('Failed to restore session:', err);
     }
-  }, []);
+  }, [loadUserLibrary]);
+
+  /* ── Load story catalog from Supabase when configured ─────────────── */
+  useEffect(() => {
+    if (!backendStatus.isConfigured) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success') {
+      showToast('Premium checkout complete. Your access will update shortly.');
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (params.get('checkout') === 'cancelled') {
+      showToast('Checkout cancelled.');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    listStories()
+      .then(stories => {
+        if (stories?.length) setStoryGroups(groupStories(stories));
+      })
+      .catch(err => {
+        console.error('Failed to load remote stories. Falling back to local data:', err);
+      });
+  }, [showToast]);
 
   /* ── Load favorites from localStorage ────────────────────────────── */
   useEffect(() => {
+    if (backendStatus.isConfigured && user) return;
     try {
       const stored = localStorage.getItem('kulala_favorites');
       if (stored) setFavorites(JSON.parse(stored));
     } catch {}
-  }, []);
+  }, [user]);
 
   /* ── Load story progress from localStorage ────────────────────────── */
   useEffect(() => {
+    if (backendStatus.isConfigured && user) return;
     try {
       const stored = localStorage.getItem('kulala_story_progress');
       if (stored) setStoryProgress(JSON.parse(stored));
     } catch {}
-  }, []);
+  }, [user]);
 
   /* ── Persist favorites ────────────────────────────────────────────── */
   useEffect(() => {
+    if (backendStatus.isConfigured && user) return;
     try {
       localStorage.setItem('kulala_favorites', JSON.stringify(favorites));
     } catch {}
-  }, [favorites]);
+  }, [favorites, user]);
 
   /* ── Persist story progress ───────────────────────────────────────── */
   useEffect(() => {
+    if (backendStatus.isConfigured && user) return;
     try {
       localStorage.setItem('kulala_story_progress', JSON.stringify(storyProgress));
     } catch {}
-  }, [storyProgress]);
-
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2800);
-  };
+  }, [storyProgress, user]);
 
   const handleLogin = (u, p) => {
     setUser(u);
     setProfile(p);
     setShowAuth(false);
-    showToast(`✦ Welcome, ${p.nickname || 'Dreamer'}!`);
+    showToast(`✦ Welcome, ${p?.nickname || 'Dreamer'}!`);
+    loadUserLibrary(u).catch(err => console.error('Failed to load user library:', err));
   };
 
-  const handleLogout = () => {
-    try { localStorage.removeItem('kulala_demo_user'); } catch {}
+  const handleLogout = async () => {
+    if (backendStatus.isConfigured) {
+      try {
+        await signOut();
+      } catch (err) {
+        showToast(err.message || 'Could not sign out.');
+        return;
+      }
+    } else {
+      try { localStorage.removeItem('kulala_demo_user'); } catch {}
+    }
     setUser(null);
     setProfile(null);
+    setFavorites([]);
+    setStoryProgress({});
     setView('home');
     showToast('👋 Until next bedtime!');
   };
+
+  const handleSaveProfile = useCallback(async ({ user: currentUser, profile: nextProfile }) => {
+    if (backendStatus.isConfigured && currentUser) {
+      const updated = await upsertProfile({ user: currentUser, profile: nextProfile });
+      setProfile(updated);
+      return;
+    }
+    try { localStorage.setItem('kulala_demo_user', JSON.stringify(nextProfile)); } catch {}
+    setProfile(nextProfile);
+  }, []);
 
   /* ── Favorites helpers ────────────────────────────────────────────── */
   const isFavorite = useCallback((storyId) => favorites.includes(storyId), [favorites]);
 
   const toggleFavorite = useCallback((storyId) => {
     setFavorites(prev => {
-      const next = prev.includes(storyId)
+      const wasFavorite = prev.includes(storyId);
+      const next = wasFavorite
         ? prev.filter(id => id !== storyId)
         : [...prev, storyId];
+      if (backendStatus.isConfigured && user) {
+        setFavorite({ user, storyId, isFavorite: !wasFavorite })
+          .catch(err => {
+            console.error('Failed to save favorite:', err);
+            showToast('Could not sync saved story.');
+          });
+      }
       showToast(next.includes(storyId) ? '⭐ Added to Saved' : '✦ Removed from Saved');
       return next;
     });
-  }, []);
+  }, [showToast, user]);
 
   /* ── Story progress helpers ───────────────────────────────────────── */
   const saveProgress = useCallback((storyId, percent, sentenceIndex) => {
@@ -116,12 +255,16 @@ const App = () => {
       ...prev,
       [storyId]: { percent, sentenceIndex, updatedAt: Date.now() }
     }));
-  }, []);
+    if (backendStatus.isConfigured && user) {
+      saveRemoteProgress({ user, storyId, percent, sentenceIndex })
+        .catch(err => console.error('Failed to save story progress:', err));
+    }
+  }, [user]);
 
   const getProgress = useCallback((storyId) => storyProgress[storyId] || null, [storyProgress]);
 
   /* ── Continue Reading: real data from progress ────────────────────── */
-  const continueReadingStories = ALL_STORIES
+  const continueReadingStories = allStories
     .filter(s => storyProgress[s.id]?.percent > 0 && storyProgress[s.id]?.percent < 100)
     .sort((a, b) => (storyProgress[b.id]?.updatedAt || 0) - (storyProgress[a.id]?.updatedAt || 0))
     .slice(0, 6);
@@ -138,13 +281,59 @@ const App = () => {
   }, [voice.playAudio, voice.speakSentences]);
 
   const handleStoryOpen = useCallback((story) => {
-    if (story.isPremium && !user) {
-      setAuthReason('premium');
-      setShowAuth(true);
-    } else {
+    const openStory = async () => {
+      if (story.isPremium && !user) {
+        setAuthReason('premium');
+        setShowAuth(true);
+        return;
+      }
+
+      if (backendStatus.isConfigured && story.isPremium && !profile?.hasPremium) {
+        showToast('Opening premium checkout...');
+        try {
+          await startCheckout();
+        } catch (err) {
+          console.error('Failed to start checkout:', err);
+          showToast('Premium checkout is not configured yet.');
+        }
+        return;
+      }
+
+      if (backendStatus.isConfigured) {
+        try {
+          const fullStory = await getStory(story.id);
+          if (fullStory?.body) {
+            setSelectedStory(fullStory);
+            return;
+          }
+          if (story.isPremium) {
+            showToast('Premium access is required for this story.');
+            return;
+          }
+        } catch (err) {
+          console.error('Failed to load story:', err);
+          showToast('Could not load this story.');
+          return;
+        }
+      }
+
       setSelectedStory(story);
+    };
+
+    openStory();
+  }, [profile?.hasPremium, showToast, user]);
+
+  const handleDirectStoryOpen = useCallback((story) => {
+    if (story?.isPremium) {
+      handleStoryOpen(story);
+      return;
     }
-  }, [user]);
+    setSelectedStory(story);
+  }, [handleStoryOpen]);
+
+  const handleFeaturedStoryOpen = useCallback(() => {
+    if (storyGroups.maji[0]) handleStoryOpen(storyGroups.maji[0]);
+  }, [handleStoryOpen, storyGroups.maji]);
 
   const handleNavChange = (tabId) => {
     if (tabId === 'profile' && !user) {
@@ -156,7 +345,7 @@ const App = () => {
   };
 
   /* ── Favorites view content ───────────────────────────────────────── */
-  const favoriteStories = ALL_STORIES.filter(s => favorites.includes(s.id));
+  const favoriteStories = allStories.filter(s => favorites.includes(s.id));
 
   /* ─────────────────────────────────────────────────────────────────── */
 
@@ -202,9 +391,9 @@ const App = () => {
         {view === 'home' && (
           <>
             <HeroBanner
-              story={MAJI_EPISODES[0]}
-              onPlay={() => setSelectedStory(MAJI_EPISODES[0])}
-              onMoreInfo={() => setSelectedStory(MAJI_EPISODES[0])}
+              story={storyGroups.maji[0]}
+              onPlay={handleFeaturedStoryOpen}
+              onMoreInfo={handleFeaturedStoryOpen}
             />
             {continueReadingStories.length > 0 && (
               <ContinueRow
@@ -212,22 +401,22 @@ const App = () => {
                   ...s,
                   progress: storyProgress[s.id]?.percent || 0
                 }))}
-                stories={ALL_STORIES}
-                onOpen={setSelectedStory}
+                stories={allStories}
+                onOpen={handleDirectStoryOpen}
               />
             )}
             {continueReadingStories.length === 0 && (
               <ContinueRow
                 items={CONTINUE_READING}
-                stories={ALL_STORIES}
-                onOpen={setSelectedStory}
+                stories={allStories}
+                onOpen={handleDirectStoryOpen}
               />
             )}
             <div className="deco-line" style={{ marginTop: 48 }} />
-            <StoryRow title="Maji's Adventures" stories={MAJI_EPISODES}     onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Bedtime Tales"      stories={BEDTIME_TALES}    onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Calm & Sleep"        stories={CALM_TALES}       onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Bedtime Classics"    stories={EXISTING_STORIES} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Maji's Adventures" stories={storyGroups.maji}     onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Bedtime Tales"      stories={storyGroups.bedtime} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Calm & Sleep"        stories={storyGroups.calm}    onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Bedtime Classics"    stories={storyGroups.classic} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
             <div style={{ height: 80 }} />
           </>
         )}
@@ -238,10 +427,10 @@ const App = () => {
             <div style={{ padding: '0 var(--page-px)', marginBottom: '0.5rem' }}>
               <span className="section-label">All Stories</span>
             </div>
-            <StoryRow title="Maji's Adventures" stories={MAJI_EPISODES}     onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Bedtime Tales"      stories={BEDTIME_TALES}    onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Calm & Sleep"        stories={CALM_TALES}       onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
-            <StoryRow title="Bedtime Classics"    stories={EXISTING_STORIES} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Maji's Adventures" stories={storyGroups.maji}     onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Bedtime Tales"      stories={storyGroups.bedtime} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Calm & Sleep"        stories={storyGroups.calm}    onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
+            <StoryRow title="Bedtime Classics"    stories={storyGroups.classic} onOpen={handleStoryOpen} isFavorite={isFavorite} onFavorite={toggleFavorite} />
             <div style={{ height: 80 }} />
           </div>
         )}
@@ -301,7 +490,7 @@ const App = () => {
                 ← Return to Home
               </button>
             </div>
-            <ProfileTab userProfile={profile} onLogout={handleLogout} />
+            <ProfileTab user={user} userProfile={profile} onLogout={handleLogout} onSaveProfile={handleSaveProfile} />
           </div>
         )}
       </main>
